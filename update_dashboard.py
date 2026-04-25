@@ -307,73 +307,20 @@ html_template = """<!DOCTYPE html>
 <title>PDO Riyah 1&2 — QHSE Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+// Password Protection
 (function() {
-    // Check if already authenticated
-    if (sessionStorage.getItem('riyah_auth') === 'true') {
-        return;
+    var userPass = prompt("🔒 Enter password to access HSE Dashboard:");
+    var correctPass = "riyahwind";
+    
+    if (userPass !== correctPass) {
+        document.body.innerHTML = `
+            <div style="text-align: center; padding: 150px 20px; font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #0a0e1a 0%, #111827 100%); color: white; min-height: 100vh;">
+                <h1 style="color: #ef4444; font-size: 48px; margin-bottom: 20px;">🔒 Access Denied</h1>
+                <p style="color: #94a3b8;">You are not authorized to view this dashboard.</p>
+                <p style="color: #64748b;">Contact: insightdealer.in@gmail.com</p>
+            </div>
+        `;
     }
-    
-    // Create password screen
-    var overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = '#0a0e1a';
-    overlay.style.zIndex = '99999';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-    overlay.style.fontFamily = "'DM Sans', sans-serif";
-    
-    overlay.innerHTML = `
-        <div style="text-align: center; padding: 40px; max-width: 400px; width: 90%;">
-            <div style="margin-bottom: 25px;">
-                <div style="font-size: 55px; margin-bottom: 10px;">📊🔒</div>
-                <h1 style="color: #3b82f6; font-size: 22px; margin-bottom: 8px; font-family: 'Syne', sans-serif;">HSE Dashboard</h1>
-                <p style="color: #64748b; font-size: 13px;">PDO Riyah 1 & 2 Wind IPP</p>
-            </div>
-            <div style="background: #111827; border-radius: 16px; padding: 30px; border: 1px solid rgba(255,255,255,0.1);">
-                <div style="margin-bottom: 20px;">
-                    <div style="color: #94a3b8; font-size: 13px; margin-bottom: 8px;">🔐 Enter Password</div>
-                    <input type="password" id="passInput" placeholder="••••••••" style="
-                        width: 100%; padding: 12px;
-                        background: #1a2235; border: 1px solid #2d3748;
-                        border-radius: 10px; color: white; font-size: 16px;
-                        text-align: center; outline: none;
-                    ">
-                </div>
-                <button onclick="checkPass()" style="
-                    width: 100%; padding: 12px;
-                    background: #3b82f6; border: none;
-                    border-radius: 10px; color: white; font-size: 15px;
-                    font-weight: 600; cursor: pointer;
-                ">Access Dashboard</button>
-                <div style="font-size: 11px; color: #475569; margin-top: 20px;">
-                    🔐 Authorized personnel only
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.innerHTML = '';
-    document.body.appendChild(overlay);
-    
-    window.checkPass = function() {
-        var pwd = document.getElementById('passInput').value;
-        if (pwd === "riyahwind") {
-            sessionStorage.setItem('riyah_auth', 'true');
-            location.reload();
-        } else {
-            alert("❌ Wrong password! Access denied.");
-            document.getElementById('passInput').value = '';
-        }
-    };
-    
-    document.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') checkPass();
-    });
 })();
 </script>
 <style>
