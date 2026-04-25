@@ -306,6 +306,24 @@ html_template = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PDO Riyah 1&2 — QHSE Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// PProtect
+(function() {
+    var userPass = prompt("🔒 Enter password to access HSE Dashboard:");
+    var correctPass = "riyahwind";
+    
+    if (userPass !== correctPass) {
+        document.body.innerHTML = `
+            <div style="text-align: center; padding: 150px 20px; font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #0a0e1a 0%, #111827 100%); color: white; min-height: 100vh;">
+                <h1 style="color: #ef4444; font-size: 48px; margin-bottom: 20px;">🔒 Access Denied</h1>
+                <p style="color: #94a3b8;">You are not authorized to view this dashboard.</p>
+                <p style="color: #64748b;">Contact: insightdealer.in@gmail.com</p>
+            </div>
+        `;
+    }
+})();
+</script>
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
   
