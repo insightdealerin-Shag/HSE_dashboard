@@ -306,29 +306,6 @@ html_template = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PDO Riyah 1&2 — QHSE Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script>
-(function() {
-  if(sessionStorage.getItem('riyah_auth')==='true'){return;}
-  var o=document.createElement('div');
-  o.id='ls';
-  o.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0e1a;z-index:99999;display:flex;justify-content:center;align-items:center;';
-  o.innerHTML='<div style="text-align:center;width:360px;background:#111827;border-radius:16px;padding:36px;border:1px solid rgba(255,255,255,0.1);"><div style="font-size:42px;margin-bottom:12px;">🔐</div><h2 style="color:#f1f5f9;margin-bottom:4px;">QHSE Dashboard</h2><p style="color:#64748b;font-size:13px;margin-bottom:24px;">PDO Riyah 1 & 2 Wind IPP</p><input type="password" id="pi" placeholder="Enter password" style="width:100%;padding:12px;background:#1a2235;border:1px solid #2d3748;border-radius:10px;color:white;font-size:15px;text-align:center;outline:none;box-sizing:border-box;margin-bottom:10px;"/><div id="pe" style="color:#f87171;font-size:12px;height:16px;margin-bottom:10px;"></div><button onclick="cp()" style="width:100%;padding:12px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border:none;border-radius:10px;color:white;font-size:15px;font-weight:600;cursor:pointer;">Access Dashboard</button><p style="color:#475569;font-size:11px;margin-top:16px;">Authorized personnel only</p></div>';
-  document.body.insertBefore(o,document.body.firstChild);
-  window.cp=function(){
-    var v=document.getElementById('pi').value;
-    if(v===atob('cml5YWh3aW5k')){
-      sessionStorage.setItem('riyah_auth','true');
-      document.getElementById('ls').remove();
-    } else {
-      document.getElementById('pe').textContent='❌ Incorrect password!';
-      document.getElementById('pi').value='';
-      setTimeout(function(){document.getElementById('pe').textContent='';},2000);
-    }
-  };
-  document.addEventListener('keydown',function(e){if(e.key==='Enter')cp();});
-  setTimeout(function(){document.getElementById('pi').focus();},100);
-})();
-</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
   
