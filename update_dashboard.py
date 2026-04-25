@@ -15,7 +15,7 @@ from collections import defaultdict
 #  CONFIG — sirf yahan dono paths set karo
 # ─────────────────────────────────────────────────────────
 EXCEL_PATH = r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\MY_WORK.xlsx"
-OUTPUT_HTML = r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard\PDO_Riyah_QHSE_Dashboard.html"
+OUTPUT_HTML = r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard\index.html"
 # ─────────────────────────────────────────────────────────
 
 BASE_DATE = datetime.datetime(1899, 12, 30)
@@ -1258,3 +1258,25 @@ print(f"\n🆕 New Features:")
 print(f"  - Internal NCR table: Status filter (All/Open/Closed)")
 print(f"  - Client NCR table: Status filter (All/Open/Closed)")
 print(f"  - Export to CSV buttons on all tables")
+
+# ─────────────────────────────────────────────────────────
+# AUTO PUSH TO GITHUB
+# ─────────────────────────────────────────────────────────
+print("\n" + "="*50)
+print("📤 Pushing to GitHub automatically...")
+print("="*50)
+
+import subprocess
+import os
+import datetime
+
+os.chdir(r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard")
+
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", f"auto update {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"])
+subprocess.run(["git", "push", "origin", "master"])
+
+print("\n✅ GitHub updated successfully!")
+print("🌐 Live link: https://insightdealerin-shag.github.io/HSE_dashboard/")
+print("⏱️ 2-3 minutes me link pe reflect hoga.")
+print("="*50)
