@@ -385,7 +385,7 @@ html_template = """<!DOCTYPE html>
         
         if (password === correctPass) {
             sessionStorage.setItem('riyah_auth', 'true');
-            location.reload();
+            overlay.style.display = 'none';
         } else {
             alert('❌ Incorrect password! Access denied.');
             document.getElementById('riyahPassword').value = '';
