@@ -307,10 +307,10 @@ html_template = """<!DOCTYPE html>
 <title>PDO Riyah 1&2 — QHSE Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// Professional Password Protection
+// Password Protection - Riyah Wind Dashboard
 (function() {
     // Check if already authenticated in this session
-    if (sessionStorage.getItem('hse_auth') === 'true') {
+    if (sessionStorage.getItem('riyah_auth') === 'true') {
         return;
     }
     
@@ -339,7 +339,7 @@ html_template = """<!DOCTYPE html>
             <div style="background: #111827; border-radius: 16px; padding: 32px; border: 1px solid rgba(255,255,255,0.1);">
                 <div style="margin-bottom: 24px;">
                     <div style="color: #94a3b8; font-size: 14px; margin-bottom: 8px;">🔒 Enter password</div>
-                    <input type="password" id="hsePassword" placeholder="••••••••" style="
+                    <input type="password" id="riyahPassword" placeholder="••••••••" style="
                         width: 100%;
                         padding: 14px 16px;
                         background: #1a2235;
@@ -353,7 +353,7 @@ html_template = """<!DOCTYPE html>
                     " onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#2d3748'">
                 </div>
                 
-                <button onclick="checkPassword()" style="
+                <button onclick="checkRiyahPassword()" style="
                     width: 100%;
                     padding: 14px;
                     background: #3b82f6;
@@ -379,23 +379,23 @@ html_template = """<!DOCTYPE html>
     document.body.innerHTML = '';
     document.body.appendChild(overlay);
     
-    window.checkPassword = function() {
-        var password = document.getElementById('hsePassword').value;
+    window.checkRiyahPassword = function() {
+        var password = document.getElementById('riyahPassword').value;
         var correctPass = "riyahwind";
         
         if (password === correctPass) {
-            sessionStorage.setItem('hse_auth', 'true');
+            sessionStorage.setItem('riyah_auth', 'true');
             location.reload();
         } else {
             alert('❌ Incorrect password! Access denied.');
-            document.getElementById('hsePassword').value = '';
+            document.getElementById('riyahPassword').value = '';
         }
     };
     
     // Enter key press
     document.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            checkPassword();
+            checkRiyahPassword();
         }
     });
 })();
