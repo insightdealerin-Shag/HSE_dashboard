@@ -376,7 +376,7 @@ html_template = """<!DOCTYPE html>
         </div>
     `;
     
-    document.body.innerHTML = '';
+    
     document.body.appendChild(overlay);
     
     window.checkRiyahPassword = function() {
