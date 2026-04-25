@@ -6,23 +6,99 @@
 <title>PDO Riyah 1&2 — QHSE Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// PProtect
+// Professional Password Protection
 (function() {
-    var userPass = prompt("🔒 Enter password to access HSE Dashboard:");
-    var correctPass = "riyahwind";
-    
-    if (userPass !== correctPass) {
-        document.body.innerHTML = `
-            <div style="text-align: center; padding: 150px 20px; font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #0a0e1a 0%, #111827 100%); color: white; min-height: 100vh;">
-                <h1 style="color: #ef4444; font-size: 48px; margin-bottom: 20px;">🔒 Access Denied</h1>
-                <p style="color: #94a3b8;">You are not authorized to view this dashboard.</p>
-                <p style="color: #64748b;">Contact: insightdealer.in@gmail.com</p>
-            </div>
-        `;
+    // Check if already authenticated in this session
+    if (sessionStorage.getItem('hse_auth') === 'true') {
+        return;
     }
+    
+    // Create password overlay
+    var overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = '#0a0e1a';
+    overlay.style.zIndex = '99999';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.fontFamily = "'DM Sans', sans-serif";
+    
+    overlay.innerHTML = `
+        <div style="text-align: center; padding: 40px; max-width: 450px; width: 90%;">
+            <div style="margin-bottom: 30px;">
+                <div style="font-size: 48px; margin-bottom: 10px;">📊</div>
+                <h1 style="color: #3b82f6; font-size: 24px; margin-bottom: 8px; font-family: 'Syne', sans-serif;">QHSE Dashboard</h1>
+                <p style="color: #64748b; font-size: 14px;">PDO Riyah 1 & 2 Wind IPP</p>
+            </div>
+            
+            <div style="background: #111827; border-radius: 16px; padding: 32px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="margin-bottom: 24px;">
+                    <div style="color: #94a3b8; font-size: 14px; margin-bottom: 8px;">🔒 Enter password</div>
+                    <input type="password" id="hsePassword" placeholder="••••••••" style="
+                        width: 100%;
+                        padding: 14px 16px;
+                        background: #1a2235;
+                        border: 1px solid #2d3748;
+                        border-radius: 12px;
+                        color: white;
+                        font-size: 16px;
+                        text-align: center;
+                        outline: none;
+                        transition: all 0.3s;
+                    " onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#2d3748'">
+                </div>
+                
+                <button onclick="checkPassword()" style="
+                    width: 100%;
+                    padding: 14px;
+                    background: #3b82f6;
+                    border: none;
+                    border-radius: 12px;
+                    color: white;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    margin-bottom: 20px;
+                " onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+                    Access Dashboard
+                </button>
+                
+                <div style="font-size: 12px; color: #4a5568; border-top: 1px solid #1a2235; padding-top: 20px;">
+                    🔐 Authorized personnel only
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.innerHTML = '';
+    document.body.appendChild(overlay);
+    
+    window.checkPassword = function() {
+        var password = document.getElementById('hsePassword').value;
+        var correctPass = "riyahwind";
+        
+        if (password === correctPass) {
+            sessionStorage.setItem('hse_auth', 'true');
+            location.reload();
+        } else {
+            alert('❌ Incorrect password! Access denied.');
+            document.getElementById('hsePassword').value = '';
+        }
+    };
+    
+    // Enter key press
+    document.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkPassword();
+        }
+    });
 })();
 </script>
-
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
   
