@@ -306,6 +306,53 @@ html_template = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PDO Riyah 1&2 — QHSE Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+(function() {
+    if(sessionStorage.getItem('riyah_auth') === 'true') return;
+
+    var lockDiv = document.createElement('div');
+    lockDiv.id = 'lockScreen';
+    lockDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0e1a;z-index:99999;display:flex;justify-content:center;align-items:center;font-family:sans-serif;';
+
+    lockDiv.innerHTML = '<div style="text-align:center;padding:40px;max-width:420px;width:90%;">'
+        + '<div style="font-size:48px;margin-bottom:12px;">📊</div>'
+        + '<h1 style="color:#3b82f6;font-size:22px;margin-bottom:6px;">QHSE Dashboard</h1>'
+        + '<p style="color:#64748b;font-size:13px;margin-bottom:28px;">PDO Riyah 1 &amp; 2 Wind IPP</p>'
+        + '<div style="background:#111827;border-radius:16px;padding:32px;border:1px solid rgba(255,255,255,0.1);">'
+        + '<div style="color:#94a3b8;font-size:13px;margin-bottom:12px;">🔒 Enter password</div>'
+        + '<input type="password" id="riyahPass" placeholder="••••••••" style="width:100%;padding:13px 16px;background:#1a2235;border:1px solid #2d3748;border-radius:10px;color:white;font-size:15px;text-align:center;outline:none;box-sizing:border-box;margin-bottom:14px;" />'
+        + '<div id="riyahErr" style="color:#f87171;font-size:12px;margin-bottom:10px;height:16px;"></div>'
+        + '<button onclick="checkRiyahPass()" style="width:100%;padding:13px;background:#3b82f6;border:none;border-radius:10px;color:white;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:18px;">Access Dashboard</button>'
+        + '<div style="font-size:11px;color:#475569;border-top:1px solid #1e2a3a;padding-top:16px;">🔐 Authorized personnel only</div>'
+        + '</div></div>';
+
+    document.body.appendChild(lockDiv);
+
+    window.checkRiyahPass = function() {
+        var val = document.getElementById('riyahPass').value;
+        var err = document.getElementById('riyahErr');
+        // Password: riyahwind
+        if(val === atob('cml5YWh3aW5k')) {
+            sessionStorage.setItem('riyah_auth', 'true');
+            document.getElementById('lockScreen').remove();
+        } else {
+            err.textContent = 'Incorrect password. Try again.';
+            document.getElementById('riyahPass').value = '';
+            document.getElementById('riyahPass').focus();
+            setTimeout(function(){ err.textContent = ''; }, 2000);
+        }
+    };
+
+    document.addEventListener('keydown', function(e) {
+        if(e.key === 'Enter') checkRiyahPass();
+    });
+
+    setTimeout(function() {
+        var inp = document.getElementById('riyahPass');
+        if(inp) inp.focus();
+    }, 100);
+})();
+</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
   
