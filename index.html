@@ -6,21 +6,18 @@
 <title>PDO Riyah 1&2 — QHSE Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// SIMPLE PASSWORD PROTECTION - WORKING
+// ULTRA SIMPLE - NO SESSION, HAR BAAR CHECK
 (function() {
-    // Clear any existing auth for testing
-    sessionStorage.removeItem('riyah_auth');
-    
-    var userPass = prompt("🔒 Enter password to access HSE Dashboard:");
-    var correctPass = "riyahwind";
-    
-    if (userPass !== correctPass) {
-        document.body.innerHTML = "<div style='text-align:center; padding:100px; background:#0a0e1a; color:#ef4444; font-family:Arial; min-height:100vh'><h1>🔒 Access Denied</h1><p style='color:#64748b'>Contact administrator</p></div>";
-    } else {
-        sessionStorage.setItem('riyah_auth', 'true');
+    var pass = prompt("🔒 Enter password:");
+    if(pass !== "riyahwind") {
+        // Page completely blank
+        document.documentElement.innerHTML = "<h1 style='text-align:center; margin-top:100px; color:red;'>ACCESS DENIED</h1>";
+        // Stop further execution
+        throw new Error("Access Denied");
     }
 })();
 </script>
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
   
