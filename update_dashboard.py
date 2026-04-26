@@ -308,28 +308,31 @@ html_template = """<!DOCTYPE html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
 <script>
-// ========== PASSWORD PROTECTION - WORKING ==========
+// ========== PASSWORD PROTECTION WITH SESSION ==========
 (function() {
-    // Force clear any previous auth
-    sessionStorage.removeItem('riyah_auth');
-    localStorage.removeItem('riyah_auth');
+    // Check if already authenticated in this session
+    if (sessionStorage.getItem('riyah_auth') === 'true') {
+        // Already logged in - show dashboard normally
+        return;
+    }
     
     var userPass = prompt("🔒 Enter password to access HSE Dashboard:");
     var correctPass = "riyahwind";
     
     if (userPass !== correctPass) {
-        // Completely clear the page
+        // Wrong password - show access denied
         document.documentElement.innerHTML = '';
         document.body.innerHTML = '';
-        // Show access denied message
         var deniedDiv = document.createElement('div');
         deniedDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0e1a;display:flex;justify-content:center;align-items:center;font-family:Arial,sans-serif;z-index:999999;';
         deniedDiv.innerHTML = '<div style="text-align:center;"><div style="font-size:64px;margin-bottom:20px;">🔒</div><h1 style="color:#ef4444;font-size:32px;margin-bottom:10px;">ACCESS DENIED</h1><p style="color:#64748b;">You are not authorized to view this dashboard.</p><p style="color:#475569;margin-top:20px;">Contact: insightdealer.in@gmail.com</p></div>';
         document.body.appendChild(deniedDiv);
-        // Stop all further JavaScript execution
         throw new Error("Access Denied - Wrong Password");
     } else {
+        // Correct password - store in session
         sessionStorage.setItem('riyah_auth', 'true');
+        // Page will reload and show dashboard
+        location.reload();
     }
 })();
 // ========== END PASSWORD PROTECTION ==========
