@@ -425,6 +425,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
     <button class="tab-btn" onclick="showTab('r2',this)">Riyah 2 Docs <span class="count">49</span></button>
     <button class="tab-btn" onclick="showTab('ncr',this)">Internal NCRs <span class="count">52</span></button>
     <button class="tab-btn" onclick="showTab('cncr',this)">Client NCRs <span class="count">11</span></button>
+    <button class="tab-btn" onclick="showTab('calendar',this)">📅 Calendar <span class="count">May 2026</span></button>
   </div>
 </div>
 
@@ -1025,6 +1026,134 @@ function fixR1OnTabClick() {
 
 // Call this function
 fixR1OnTabClick();
+</script>
+
+<!-- CALENDAR PANEL -->
+<div class="panel" id="panel-calendar">
+  <div class="panel-body">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text)">📅 Monthly HSE Activity Plan</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;">Click any day to view planned activities</div>
+      </div>
+      <div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:6px 16px;font-size:13px;color:#93c5fd;font-weight:600;">" + cal_month + ' ' + cal_year + "</div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <!-- Modal -->
+    <div id="calModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.65);z-index:9000;justify-content:center;align-items:center;">
+      <div style="background:#141c2e;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px;max-width:500px;width:92%;max-height:80vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div id="modalDate" style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);"></div>
+          <button onclick="document.getElementById('calModal').style.display='none'" style="background:rgba(255,255,255,.08);border:none;color:var(--text);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px;">✕</button>
+        </div>
+        <div id="modalActs" style="font-size:13px;color:var(--subtle);line-height:1.9;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:20px;}
+.cal-day-hdr{text-align:center;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:8px 4px;background:rgba(255,255,255,.03);border-radius:8px;}
+.cal-cell{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 8px;min-height:88px;transition:all .2s;position:relative;overflow:hidden;}
+.cal-cell.has-acts{cursor:pointer;}
+.cal-cell.has-acts:hover{border-color:#3b82f6;background:rgba(59,130,246,.06);transform:translateY(-1px);}
+.cal-cell.weekoff{background:rgba(100,116,139,.05);border-color:rgba(100,116,139,.12);}
+.cal-cell.is-today{border-color:#3b82f6;background:rgba(59,130,246,.08);}
+.cal-cell.is-today::after{content:'TODAY';position:absolute;top:4px;right:5px;font-size:8px;font-weight:700;color:#3b82f6;letter-spacing:.05em;}
+.cal-cell.other-mo{opacity:.3;}
+.cal-cell.has-acts::before{content:'';position:absolute;bottom:6px;right:6px;width:6px;height:6px;background:#10b981;border-radius:50%;}
+.cal-cell.weekoff::before{display:none;}
+.cal-num{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px;font-family:'Syne',sans-serif;}
+.cal-cell.weekoff .cal-num{color:var(--muted);}
+.cal-prev{font-size:10px;color:var(--muted);line-height:1.5;}
+.cal-woff{font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-top:4px;}
+</style>
+
+<script>
+const CAL_DATA = " + json.dumps(cal_data) + ";
+const CAL_MONTH = '" + cal_month + "';
+const CAL_YEAR  = " + cal_year + ";
+const MO_NUM = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
+const MO_NAME = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAY_HDR = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+
+function buildCal() {
+  const g = document.getElementById('calGrid');
+  if(!g) return;
+  g.innerHTML = '';
+  DAY_HDR.forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'cal-day-hdr'; h.textContent = d; g.appendChild(h);
+  });
+  const mNum = MO_NUM[CAL_MONTH] || 5;
+  const yr   = parseInt(CAL_YEAR);
+  const now  = new Date();
+  const todStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const firstDay = new Date(yr, mNum-1, 1);
+  const startMon = new Date(firstDay);
+  const dow = firstDay.getDay();
+  startMon.setDate(firstDay.getDate() - (dow===0?6:dow-1));
+
+  for(let i=0;i<42;i++) {
+    const d = new Date(startMon);
+    d.setDate(startMon.getDate()+i);
+    const dStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const inMo  = d.getMonth()+1===mNum && d.getFullYear()===yr;
+    const acts  = CAL_DATA[dStr]||'';
+    const isOff = acts==='Week Off'||(d.getDay()===5&&!acts);
+    const isToday = dStr===todStr;
+    const hasActs = acts&&acts!=='Week Off'&&acts.trim()!=='';
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell'
+      +(isOff?' weekoff':'')
+      +(isToday?' is-today':'')
+      +(!inMo?' other-mo':'')
+      +(hasActs&&!isOff?' has-acts':'');
+
+    const num = document.createElement('div');
+    num.className='cal-num'; num.textContent=d.getDate(); cell.appendChild(num);
+
+    if(isOff){
+      const b=document.createElement('div');
+      b.className='cal-woff'; b.textContent='🔴 Week Off'; cell.appendChild(b);
+    } else if(hasActs){
+      const lines=acts.split('
+').filter(l=>l.trim()).slice(0,2);
+      const p=document.createElement('div');
+      p.className='cal-prev';
+      p.textContent=lines.map(l=>l.trim()).join(' · ');
+      cell.appendChild(p);
+      cell.addEventListener('click',()=>openModal(d,acts));
+    }
+    g.appendChild(cell);
+  }
+}
+
+function openModal(d,acts){
+  const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  document.getElementById('modalDate').textContent=
+    DAYS[d.getDay()]+', '+d.getDate()+' '+MO_NAME[d.getMonth()+1]+' '+d.getFullYear();
+  const lines=acts.split('
+').filter(l=>l.trim());
+  let html='<ul style="list-style:none;padding:0;margin:0;">';
+  lines.forEach(l=>{
+    const t=l.trim();
+    if(t) html+=`<li style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);display:flex;gap:10px;"><span style="color:#3b82f6;flex-shrink:0;">▸</span><span>${t}</span></li>`;
+  });
+  html+='</ul>';
+  document.getElementById('modalActs').innerHTML=html;
+  document.getElementById('calModal').style.display='flex';
+}
+document.getElementById('calModal')?.addEventListener('click',function(e){if(e.target===this)this.style.display='none';});
+
+// Hook into showTab
+const _origShowTab=window.showTab;
+window.showTab=function(id,btn){
+  _origShowTab(id,btn);
+  if(id==='calendar') setTimeout(buildCal,50);
+};
 </script>
 </body>
 </html>
