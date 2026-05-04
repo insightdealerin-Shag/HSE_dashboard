@@ -6,35 +6,90 @@
 <title>PDO Riyah 1&2 — QHSE Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.10/dist/dotlottie-wc.js" type="module"></script>
+<style>
+#lockScreen {
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:#0a0e1a;z-index:99999;
+  display:flex;justify-content:center;align-items:center;
+}
+.lock-box {
+  text-align:center;width:380px;
+  background:#111827;border-radius:20px;
+  padding:32px 36px 36px;
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 25px 60px rgba(0,0,0,0.6);
+}
+.lock-hdec {
+  font-family:'Syne',sans-serif;font-size:32px;font-weight:800;
+  color:#f1f5f9;letter-spacing:0.05em;margin-bottom:4px;
+}
+.lock-title {
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:600;
+  color:#f1f5f9;margin-bottom:4px;
+}
+.lock-sub {
+  color:#64748b;font-size:12px;margin-bottom:22px;
+}
+.lock-input {
+  width:100%;padding:12px 16px;
+  background:#1a2235;border:1px solid #2d3748;border-radius:10px;
+  color:white;font-size:15px;text-align:center;outline:none;
+  box-sizing:border-box;margin-bottom:10px;
+  transition:border-color .2s;font-family:sans-serif;
+}
+.lock-input:focus {border-color:#3b82f6;}
+.lock-err {color:#f87171;font-size:12px;height:16px;margin-bottom:10px;}
+.lock-btn {
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,#3b82f6,#06b6d4);
+  border:none;border-radius:10px;color:white;
+  font-size:15px;font-weight:600;cursor:pointer;
+  font-family:sans-serif;transition:opacity .2s;
+}
+.lock-btn:hover{opacity:.88;}
+.lock-footer {color:#475569;font-size:11px;margin-top:16px;}
+</style>
+
+<div id="lockScreen">
+  <div class="lock-box">
+    <dotlottie-wc
+      src="https://lottie.host/0aa6a7ab-02c9-4671-afc4-ef0382ae7b2e/pEtGggkKti.lottie"
+      style="width:180px;height:180px;display:block;margin:0 auto 4px;"
+      autoplay loop>
+    </dotlottie-wc>
+    <div class="lock-hdec">HDEC</div>
+    <div class="lock-title">QHSE Dashboard</div>
+    <div class="lock-sub">PDO Riyah 1 &amp; 2 Wind IPP Project</div>
+    <input type="password" id="pi" class="lock-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')cp()"/>
+    <div id="pe" class="lock-err"></div>
+    <button class="lock-btn" onclick="cp()">Access Dashboard</button>
+    <div class="lock-footer">Authorized personnel only</div>
+  </div>
+</div>
+
 <script>
-// ========== PASSWORD PROTECTION WITH SESSION ==========
 (function() {
-    // Check if already authenticated in this session
-    if (sessionStorage.getItem('riyah_auth') === 'true') {
-        // Already logged in - show dashboard normally
-        return;
-    }
-    
-    var userPass = prompt("🔒 Enter password to access HSE Dashboard:");
-    var correctPass = "riyahwind";
-    
-    if (userPass !== correctPass) {
-        // Wrong password - show access denied
-        document.documentElement.innerHTML = '';
-        document.body.innerHTML = '';
-        var deniedDiv = document.createElement('div');
-        deniedDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0e1a;display:flex;justify-content:center;align-items:center;font-family:Arial,sans-serif;z-index:999999;';
-        deniedDiv.innerHTML = '<div style="text-align:center;"><div style="font-size:64px;margin-bottom:20px;">🔒</div><h1 style="color:#ef4444;font-size:32px;margin-bottom:10px;">ACCESS DENIED</h1><p style="color:#64748b;">You are not authorized to view this dashboard.</p><p style="color:#475569;margin-top:20px;">Contact: insightdealer.in@gmail.com</p></div>';
-        document.body.appendChild(deniedDiv);
-        throw new Error("Access Denied - Wrong Password");
-    } else {
-        // Correct password - store in session
-        sessionStorage.setItem('riyah_auth', 'true');
-        // Page will reload and show dashboard
-        location.reload();
-    }
+  if(sessionStorage.getItem('riyah_auth')==='true'){
+    document.getElementById('lockScreen').style.display='none';
+    return;
+  }
+  setTimeout(function(){document.getElementById('pi').focus();},300);
 })();
-// ========== END PASSWORD PROTECTION ==========
+
+window.cp = function() {
+  var v = document.getElementById('pi').value;
+  if(v === atob('cml5YWh3aW5k')) {
+    sessionStorage.setItem('riyah_auth','true');
+    document.getElementById('lockScreen').style.display='none';
+  } else {
+    document.getElementById('pe').textContent = '❌ Incorrect password!';
+    document.getElementById('pi').value = '';
+    document.getElementById('pi').focus();
+    setTimeout(function(){document.getElementById('pe').textContent='';},2000);
+  }
+};
+document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
 </script>
 
 <style>
@@ -357,7 +412,7 @@
       </div>
     </div>
     <div class="header-right">
-      <div class="date-badge">Updated: 03 May 2026</div>
+      <div class="date-badge">Updated: 04 May 2026</div>
       <div class="live-dot">Compiled</div>
     </div>
   </div>
@@ -603,7 +658,7 @@
   </div>
 </div>
 
-<footer>Riyah Wind IPP · QHSE Document Dashboard · Data‑assembled 03 May 2026 · PowerChina-HDEC EPC</footer>
+<footer>Riyah Wind IPP · QHSE Document Dashboard · Data‑assembled 04 May 2026 · PowerChina-HDEC EPC</footer>
 
 <script>
 // TAB LOGIC
