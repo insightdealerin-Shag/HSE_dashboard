@@ -360,8 +360,8 @@ html_template = """<!DOCTYPE html>
       autoplay loop>
     </dotlottie-wc>
     <div class="lock-hdec">HDEC</div>
-    <div class="lock-title">QHSE Dashboard</div>
-    <div class="lock-sub">PDO Riyah 1 &amp; 2 Wind IPP Project</div>
+    <div class="lock-title">HSE Dashboard</div>
+    <div class="lock-sub">Developed by: Shaguf Ahmed</div>
     <input type="password" id="pi" class="lock-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')cp()"/>
     <div id="pe" class="lock-err"></div>
     <button class="lock-btn" onclick="cp()">Access Dashboard</button>
