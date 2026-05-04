@@ -355,7 +355,7 @@ html_template = """<!DOCTYPE html>
 <div id="lockScreen">
   <div class="lock-box">
     <dotlottie-wc
-      src="https://lottie.host/0aa6a7ab-02c9-4671-afc4-ef0382ae7b2e/pEtGggkKti.lottie"
+      src="https://lottie.host/9db5369a-b959-48bc-a683-90898fc599cf/wzOT4itrzZ.lottie"
       style="width:180px;height:180px;display:block;margin:0 auto 4px;"
       autoplay loop>
     </dotlottie-wc>
