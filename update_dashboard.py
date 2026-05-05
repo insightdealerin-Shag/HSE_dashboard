@@ -726,7 +726,6 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
     <button class="tab-btn" onclick="showTab('r2',this)">Riyah 2 Docs <span class="count">""" + str(len(r2_rows)) + """</span></button>
     <button class="tab-btn" onclick="showTab('ncr',this)">Internal NCRs <span class="count">""" + str(ncr_total) + """</span></button>
     <button class="tab-btn" onclick="showTab('cncr',this)">Client NCRs <span class="count">""" + str(cncr_total) + """</span></button>
-    <button class="tab-btn" onclick="showTab('calendar',this)">📅 Calendar <span class="count">May 2026</span></button>
   </div>
 </div>
 
@@ -960,7 +959,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
   </div>
 </div>
 
-<!-- footer moved to bottom -->
+<footer>Riyah Wind IPP · QHSE Document Dashboard · Data‑assembled """ + today + """ · PowerChina-HDEC EPC</footer>
 
 <script>
 // TAB LOGIC
@@ -1328,107 +1327,6 @@ function fixR1OnTabClick() {
 // Call this function
 fixR1OnTabClick();
 </script>
-<!-- CALENDAR -->
-<div class="panel" id="panel-calendar">
-  <div class="panel-body" style="padding-top:24px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px;">
-      <div>
-        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text)">📅 Monthly HSE Activity Plan</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;">Click any day to view planned activities</div>
-      </div>
-      <div style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:8px 20px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#93c5fd;">May 2026</div>
-    </div>
-    <div class="cal-grid" id="calGrid"></div>
-    <div id="calModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.75);z-index:9999;justify-content:center;align-items:center;" onclick="if(event.target===this)this.style.display='none'">
-      <div style="background:#141c2e;border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:28px 32px;max-width:520px;width:92%;max-height:82vh;overflow-y:auto;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
-          <div>
-            <div id="calModalDay" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#f1f5f9;"></div>
-            <div id="calModalDate" style="font-size:11px;color:#64748b;margin-top:2px;"></div>
-          </div>
-          <button onclick="document.getElementById('calModal').style.display='none'" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:#94a3b8;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
-        </div>
-        <div id="calModalList"></div>
-      </div>
-    </div>
-  </div>
-</div>
-<style>
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
-.cal-hdr{text-align:center;font-size:10px;font-weight:700;color:#64748b;letter-spacing:.1em;text-transform:uppercase;padding:9px 4px;background:rgba(255,255,255,.03);border-radius:8px;}
-.cal-cell{background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 9px;min-height:95px;position:relative;overflow:hidden;transition:all .2s;}
-.cal-cell.cal-click{cursor:pointer;}
-.cal-cell.cal-click:hover{border-color:#3b82f6;background:rgba(59,130,246,.07);transform:translateY(-2px);}
-.cal-cell.cal-off{background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.1);}
-.cal-cell.cal-today{border-color:#3b82f6!important;background:rgba(59,130,246,.1);}
-.cal-cell.cal-dim{opacity:.2;pointer-events:none;}
-.cal-cell.cal-click::after{content:'';position:absolute;bottom:7px;right:7px;width:6px;height:6px;background:#10b981;border-radius:50%;}
-.cal-cell.cal-off::after{display:none;}
-.cal-num{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9;margin-bottom:5px;}
-.cal-cell.cal-today .cal-num{color:#60a5fa;}
-.cal-todlbl{position:absolute;top:5px;right:7px;font-size:8px;font-weight:700;color:#3b82f6;letter-spacing:.06em;}
-.cal-offlbl{font-size:11px;font-weight:600;color:#f87171;margin-top:3px;}
-.cal-prev{font-size:10px;color:#64748b;line-height:1.5;margin-top:3px;}
-</style>
-<script>
-var CAL_DATA={"2026-05-01": "Week Off", "2026-05-02": "Fire extinguisher inspection|Vehicle inspection|First Aid Box inspection|Weekly HSE Meeting (Sub-con) + Knowledge sharing session", "2026-05-03": "SPV Management Walkthrough|PPE inspection|Fire Safety Awareness|Chemical storage area inspection", "2026-05-04": "ID card and HSE Passport verification|Equipment inspection|Ambulance inspection|Ladder and Scaffold inspection|Weekly HSE report preparation and submission", "2026-05-05": "Inspection of Lifting tools and accessories|Excavation Awareness", "2026-05-06": "DG & DB inspection|PTW Audit|Onsite training|Electrical tools inspection campaign", "2026-05-07": "Welfare facility inspection|Awareness on Grievances|5S inspection|Weekly Housekeeping campaign site|Safety campaign on site", "2026-05-08": "Week Off", "2026-05-09": "Fire extinguisher inspection|Vehicle inspection|First Aid Box inspection|Weekly HSE Meeting (Sub-con) + Knowledge sharing session|Onsite training", "2026-05-10": "SPV Management Walkthrough|Site office Inspection|Report preparation and compliance|Electrical Safety Awareness|Compressed gas cylinder inspection|PPE inspection", "2026-05-11": "Fire extinguisher inspection|Vehicle inspection|First Aid Box inspection|Weekly HSE Meeting (Sub-con) + Knowledge sharing session|Onsite training", "2026-05-12": "Inspection of WAH tools|Documentation and data control|Compressed gas cylinder inspection|Awareness Training Emergency response plan", "2026-05-13": "Inspection of Lifting tools and accessories|Weekly Report|Mechanical Lifting Awareness|Lifting tools inspection|Crane inspection|Working at height awareness training|Full body double lanyard safety harness & PPE inspection", "2026-05-14": "Walkthrough compliance report submission|Power tool inspection|Electrical inspection|Authorized electrical person document verification|Electrical hand gloves inspection", "2026-05-15": "Week Off", "2026-05-16": "DG & DB Inspection|Mock Drill|5S inspection|Waste Management Awareness|Onsite training|Safety committee meeting with respective sub contractor|Reward & Recognition", "2026-05-17": "SPV Management Walkthrough|Welfare facility inspection|Fire extinguisher inspection|Vehicle inspection|First Aid Box inspection|Weekly HSE Meeting (Sub-con) + Knowledge sharing session", "2026-05-18": "Chemicals storage and Handling Inspection|Report preparation and compliance|PPE inspection|Hand & Power Tools Awareness", "2026-05-19": "Document Audit|Welfare facility Audit/Inspection|Awareness Training Near Miss Reporting", "2026-05-20": "SPV Management Walkthrough|Inspection of Powertools|LOTO Awareness|Electrical Inspection with electrical competent person", "2026-05-21": "Road traffic signs and road condition|Monthly Report preparation|JM Audit|MEWP inspection", "2026-05-22": "Week Off", "2026-05-23": "Welfare facility inspection|Mock Drill|5S inspection|Human resources Awareness", "2026-05-24": "SPV Management Walkthrough|Fire extinguisher inspection|Vehicle inspection|First Aid Box inspection|Weekly HSE Meeting (Sub-con) + Knowledge sharing session", "2026-05-25": "Inspection of road condition|Report preparation and compliance|Onsite Training on Lifting Operation|PPE inspection|Emergency Response Awareness|Onsite training|Height Rescue kit inspection", "2026-05-26": "Vehicle inspection|Equipment inspection|Ambulance inspection|Life saving awareness session|HSE policy awareness session", "2026-05-27": "SPV Management Walkthrough|Inspection of Lifting tools and accessories|Stop work authority Awareness|Document verification", "2026-05-28": "ID card and HSE Passport verification|Equipment inspection|Ambulance inspection|Ladder and Scaffold inspection|Weekly HSE report preparation and submission", "2026-05-29": "Week Off", "2026-05-30": "DG & DB Inspection|Mock Drill|5S inspection|Waste Management Awareness|Onsite training", "2026-05-31": "SPV Management Walkthrough|Road traffic signs and road condition|Monthly Report preparation|JM Audit|MEWP inspection|Defensive driving safety training|Light vehicles inspection"};
-var CAL_MNF=['','January','February','March','April','May','June','July','August','September','October','November','December'];
-var CAL_DNF=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var CAL_DHD=['MON','TUE','WED','THU','FRI','SAT','SUN'];
-
-function calBuild(){
-  var g=document.getElementById('calGrid');
-  if(!g)return;
-  g.innerHTML='';
-  CAL_DHD.forEach(function(d){var h=document.createElement('div');h.className='cal-hdr';h.textContent=d;g.appendChild(h);});
-  var now=new Date();
-  var tod=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-  var first=new Date(2026,4,1);
-  var start=new Date(first);
-  start.setDate(first.getDate()-(first.getDay()===0?6:first.getDay()-1));
-  for(var i=0;i<42;i++){
-    var d=new Date(start);d.setDate(start.getDate()+i);
-    var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    var inMo=d.getMonth()===4&&d.getFullYear()===2026;
-    var acts=CAL_DATA[ds]||'';
-    var isOff=acts==='Week Off';
-    var isTod=ds===tod;
-    var hasTsk=acts&&!isOff&&acts.trim()!=='';
-    var cell=document.createElement('div');
-    cell.className='cal-cell'+(isOff?' cal-off':'')+(isTod?' cal-today':'')+(!inMo?' cal-dim':'')+(hasTsk?' cal-click':'');
-    var num=document.createElement('div');num.className='cal-num';num.textContent=d.getDate();cell.appendChild(num);
-    if(isTod){var tl=document.createElement('div');tl.className='cal-todlbl';tl.textContent='TODAY';cell.appendChild(tl);}
-    if(isOff){var ol=document.createElement('div');ol.className='cal-offlbl';ol.textContent='🔴 Week Off';cell.appendChild(ol);}
-    else if(hasTsk){
-      var lines=acts.split('|').slice(0,2);
-      var pv=document.createElement('div');pv.className='cal-prev';
-      pv.textContent=lines.join(' · ');
-      cell.appendChild(pv);
-      (function(dd,aa){cell.onclick=function(){calOpen(dd,aa);};})(d,acts);
-    }
-    g.appendChild(cell);
-  }
-}
-
-function calOpen(d,acts){
-  document.getElementById('calModalDay').textContent=CAL_DNF[d.getDay()];
-  document.getElementById('calModalDate').textContent=d.getDate()+' '+CAL_MNF[d.getMonth()+1]+' '+d.getFullYear();
-  var lines=acts.split('|').filter(function(l){return l.trim();});
-  var html='';
-  lines.forEach(function(l,i){
-    html+='<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);">'+
-      '<div style="min-width:24px;height:24px;background:rgba(59,130,246,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#60a5fa;flex-shrink:0;">'+(i+1)+'</div>'+
-      '<div style="font-size:13px;color:#cbd5e1;line-height:1.6;padding-top:3px;">'+l.trim()+'</div></div>';
-  });
-  document.getElementById('calModalList').innerHTML=html;
-  document.getElementById('calModal').style.display='flex';
-}
-
-// Hook showTab
-var _cOST=window.showTab;
-window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
-</script>
-<footer>Riyah Wind IPP · QHSE Document Dashboard · Data‑assembled """ + today + """ · PowerChina-HDEC EPC</footer>
 </body>
 </html>"""
 
