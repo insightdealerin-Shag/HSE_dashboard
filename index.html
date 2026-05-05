@@ -412,7 +412,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
       </div>
     </div>
     <div class="header-right">
-      <div class="date-badge">Updated: 04 May 2026</div>
+      <div class="date-badge">Updated: 05 May 2026</div>
       <div class="live-dot">Compiled</div>
     </div>
   </div>
@@ -425,6 +425,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
     <button class="tab-btn" onclick="showTab('r2',this)">Riyah 2 Docs <span class="count">49</span></button>
     <button class="tab-btn" onclick="showTab('ncr',this)">Internal NCRs <span class="count">52</span></button>
     <button class="tab-btn" onclick="showTab('cncr',this)">Client NCRs <span class="count">11</span></button>
+    <button class="tab-btn" onclick="showTab('calendar',this)">📅 Calendar <span class="count">May 2026</span></button>
   </div>
 </div>
 
@@ -658,7 +659,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
   </div>
 </div>
 
-<footer>Riyah Wind IPP · QHSE Document Dashboard · Data‑assembled 04 May 2026 · PowerChina-HDEC EPC</footer>
+<footer>Riyah Wind IPP · QHSE Document Dashboard · Data‑assembled 05 May 2026 · PowerChina-HDEC EPC</footer>
 
 <script>
 // TAB LOGIC
@@ -1025,6 +1026,134 @@ function fixR1OnTabClick() {
 
 // Call this function
 fixR1OnTabClick();
+
+// ── Hook showTab for calendar ─────────────────────────
+(function(){
+  var _o = window.showTab;
+  window.showTab = function(id, btn) {
+    _o(id, btn);
+    if(id === 'calendar') setTimeout(buildCal, 30);
+  };
+})();
+</script>
+
+<!-- ══ CALENDAR PANEL ══ -->
+<div class="panel" id="panel-calendar">
+  <div class="panel-body">
+
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);">📅 Monthly HSE Activity Plan</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;">Click any day to view planned activities</div>
+      </div>
+      <div style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:8px 20px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#93c5fd;">May 2026</div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:24px;"></div>
+
+    <!-- Modal -->
+    <div id="calModal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.72);z-index:9999;justify-content:center;align-items:center;">
+      <div style="background:#141c2e;border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:28px 32px;max-width:520px;width:92%;max-height:82vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.6);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+          <div>
+            <div id="calModalDay" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#f1f5f9;"></div>
+            <div id="calModalDate" style="font-size:11px;color:#64748b;margin-top:2px;"></div>
+          </div>
+          <button onclick="document.getElementById('calModal').style.display='none'" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:#94a3b8;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
+        </div>
+        <div id="calModalList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.cal-hdr{text-align:center;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:9px 4px;background:rgba(255,255,255,.03);border-radius:8px;}
+.cal-cell{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 9px;min-height:95px;position:relative;overflow:hidden;transition:all .2s;}
+.cal-cell.c-click{cursor:pointer;}
+.cal-cell.c-click:hover{border-color:#3b82f6;background:rgba(59,130,246,.07);transform:translateY(-2px);box-shadow:0 6px 24px rgba(59,130,246,.14);}
+.cal-cell.c-off{background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.12);}
+.cal-cell.c-today{border-color:#3b82f6!important;background:rgba(59,130,246,.1);}
+.cal-cell.c-dim{opacity:.22;}
+.cal-cell.c-click::after{content:'';position:absolute;bottom:7px;right:7px;width:6px;height:6px;background:#10b981;border-radius:50%;}
+.cal-cell.c-off::after,.cal-cell.c-dim::after{display:none;}
+.c-num{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:5px;}
+.c-today .c-num{color:#60a5fa;}
+.c-tod-lbl{position:absolute;top:5px;right:7px;font-size:8px;font-weight:700;color:#3b82f6;letter-spacing:.07em;}
+.c-off-lbl{font-size:11px;font-weight:600;color:#f87171;margin-top:3px;}
+.c-prev{font-size:10px;color:var(--muted);line-height:1.55;margin-top:3px;}
+</style>
+
+<script>
+const _CAL = {"2026-04-27": "ID card and HSE Passport verification\nEquipment inspection\nAmbulance inspection\nLadder and Scaffold inspection\nWeekly HSE report preparation and submission", "2026-04-28": "Welfare facility inspection\nNoise & Vibration Awareness\n5S inspection\nPTW Audit\nDashboard update", "2026-04-29": "DG & DB Inspection\nMock Drill\n5S inspection\nWaste Management Awareness\nOnsite training", "2026-04-30": "Road traffic signs and road condition\nMonthly Report preparation\nJM Audit\nMEWP inspection", "2026-05-01": "Week Off", "2026-05-02": "Fire extinguisher inspection\nVehicle inspection\nFirst Aid Box inspection\nWeekly HSE Meeting (Sub-con) + Knowledge sharing session", "2026-05-03": "SPV Management Walkthrough\nPPE inspection\nFire Safety Awareness\nChemical storage area inspection", "2026-05-04": "ID card and HSE Passport verification\nEquipment inspection\nAmbulance inspection\nLadder and Scaffold inspection\nWeekly HSE report preparation and submission", "2026-05-05": "Inspection of Lifting tools and accessories\nExcavation Awareness", "2026-05-06": "DG & DB inspection\nPTW Audit\nOnsite training\nElectrical tools inspection campaign", "2026-05-07": "Welfare facility inspection\nAwareness on Grievances\n5S inspection\nWeekly Housekeeping campaign site\nSafety campaign on site", "2026-05-08": "Week Off", "2026-05-09": "Fire extinguisher inspection\nVehicle inspection\nFirst Aid Box inspection\nWeekly HSE Meeting (Sub-con) + Knowledge sharing session\nOnsite training", "2026-05-10": "SPV Management Walkthrough\nSite office Inspection\nReport preparation and compliance\nElectrical Safety Awareness\nCompressed gas cylinder inspection\nPPE inspection", "2026-05-11": "Fire extinguisher inspection\nVehicle inspection\nFirst Aid Box inspection\nWeekly HSE Meeting (Sub-con) + Knowledge sharing session\nOnsite training", "2026-05-12": "Inspection of WAH tools\nDocumentation and data control\nCompressed gas cylinder inspection\nAwareness Training Emergency response plan", "2026-05-13": "Inspection of Lifting tools and accessories\nWeekly Report\nMechanical Lifting Awareness\nLifting tools inspection\nCrane inspection\nWorking at height awareness training\nFull body double lanyard safety harness & PPE inspection", "2026-05-14": "Walkthrough compliance report submission\nPower tool inspection\nElectrical inspection\nAuthorized electrical person document verification\nElectrical hand gloves inspection", "2026-05-15": "Week Off", "2026-05-16": "DG & DB Inspection\nMock Drill\n5S inspection\nWaste Management Awareness\nOnsite training\nSafety committee meeting with respective sub contractor\nReward & Recognition", "2026-05-17": "SPV Management Walkthrough\nWelfare facility inspection\nFire extinguisher inspection\nVehicle inspection\nFirst Aid Box inspection\nWeekly HSE Meeting (Sub-con) + Knowledge sharing session", "2026-05-18": "Chemicals storage and Handling Inspection\nReport preparation and compliance\nPPE inspection\nHand & Power Tools Awareness", "2026-05-19": "Document Audit\nWelfare facility Audit/Inspection\nAwareness Training Near Miss Reporting", "2026-05-20": "SPV Management Walkthrough\nInspection of Powertools\nLOTO Awareness\nElectrical Inspection with electrical competent person", "2026-05-21": "Road traffic signs and road condition\nMonthly Report preparation\nJM Audit\nMEWP inspection", "2026-05-22": "Week Off", "2026-05-23": "Welfare facility inspection\nMock Drill\n5S inspection\nHuman resources Awareness", "2026-05-24": "SPV Management Walkthrough\nFire extinguisher inspection\nVehicle inspection\nFirst Aid Box inspection\nWeekly HSE Meeting (Sub-con) + Knowledge sharing session", "2026-05-25": "Inspection of road condition\nReport preparation and compliance\nOnsite Training on Lifting Operation\nPPE inspection\nEmergency Response Awareness\nOnsite training\nHeight Rescue kit inspection", "2026-05-26": "Vehicle inspection\nEquipment inspection\nAmbulance inspection\nLife saving awareness session\nHSE policy awareness session", "2026-05-27": "SPV Management Walkthrough\nInspection of Lifting tools and accessories\nStop work authority Awareness\nDocument verification", "2026-05-28": "ID card and HSE Passport verification\nEquipment inspection\nAmbulance inspection\nLadder and Scaffold inspection\nWeekly HSE report preparation and submission", "2026-05-29": "Week Off", "2026-05-30": "DG & DB Inspection\nMock Drill\n5S inspection\nWaste Management Awareness\nOnsite training", "2026-05-31": "SPV Management Walkthrough\nRoad traffic signs and road condition\nMonthly Report preparation\nJM Audit\nMEWP inspection\nDefensive driving safety training\nLight vehicles inspection"};
+const _CM  = 'May';
+const _CY  = parseInt('2026');
+const _MNO = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
+const _MNF = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+const _DNF = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const _DHD = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+
+function buildCal() {
+  const g = document.getElementById('calGrid');
+  if(!g) return;
+  g.innerHTML = '';
+  _DHD.forEach(d => {
+    const h = document.createElement('div');
+    h.className='cal-hdr'; h.textContent=d; g.appendChild(h);
+  });
+  const mNum = _MNO[_CM]||5;
+  const now  = new Date();
+  const tod  = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  const first = new Date(_CY, mNum-1, 1);
+  const start = new Date(first);
+  start.setDate(first.getDate()-(first.getDay()===0?6:first.getDay()-1));
+
+  for(let i=0; i<42; i++){
+    const d  = new Date(start); d.setDate(start.getDate()+i);
+    const ds = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const inMo  = d.getMonth()+1===mNum && d.getFullYear()===_CY;
+    const acts  = _CAL[ds]||'';
+    const isOff = acts==='Week Off'||(d.getDay()===5&&!acts);
+    const isTod = ds===tod;
+    const hasTsk= acts&&acts!=='Week Off'&&acts.trim()!=='';
+
+    const cell = document.createElement('div');
+    cell.className='cal-cell'+(isOff?' c-off':'')+(isTod?' c-today':'')+(!inMo?' c-dim':'')+(hasTsk&&!isOff?' c-click':'');
+
+    const num=document.createElement('div'); num.className='c-num'; num.textContent=d.getDate(); cell.appendChild(num);
+    if(isTod){const tl=document.createElement('div');tl.className='c-tod-lbl';tl.textContent='TODAY';cell.appendChild(tl);}
+
+    if(isOff){
+      const ol=document.createElement('div'); ol.className='c-off-lbl'; ol.textContent='🔴 Week Off'; cell.appendChild(ol);
+    } else if(hasTsk){
+      const lines=acts.split('
+').filter(l=>l.trim()).slice(0,2);
+      const pv=document.createElement('div'); pv.className='c-prev';
+      pv.textContent=lines.map(l=>l.replace(/^\d+[-.)]?\s*/,'').trim()).join(' · ');
+      cell.appendChild(pv);
+      cell.addEventListener('click',()=>openCalModal(d,acts));
+    }
+    g.appendChild(cell);
+  }
+}
+
+function openCalModal(d, acts){
+  document.getElementById('calModalDay').textContent  = _DNF[d.getDay()];
+  document.getElementById('calModalDate').textContent = d.getDate()+' '+_MNF[d.getMonth()+1]+' '+d.getFullYear();
+  const lines=acts.split('
+').filter(l=>l.trim());
+  let html='';
+  lines.forEach((l,i)=>{
+    const t=l.replace(/^\d+[-.)]?\s*/,'').trim(); if(!t)return;
+    html+=`<div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+      <div style="min-width:24px;height:24px;background:rgba(59,130,246,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#60a5fa;flex-shrink:0;">${i+1}</div>
+      <div style="font-size:13px;color:#cbd5e1;line-height:1.6;padding-top:3px;">${t}</div></div>`;
+  });
+  document.getElementById('calModalList').innerHTML=html||'<div style="color:#64748b;padding:10px 0;">No activities</div>';
+  document.getElementById('calModal').style.display='flex';
+}
 </script>
 </body>
 </html>
