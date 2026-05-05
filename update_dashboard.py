@@ -125,6 +125,70 @@ try:
 except Exception as _e:
     print(f"  ⚠️ Calendar: {_e}")
 
+# ── KPI READING ───────────────────────────────────────────
+kpi_data = {
+    'month': 'April 2026',
+    'days_lti_month': 0, 'days_lti_total': 0,
+    'manpower': [], 'total_mp': 0, 'total_hrs': 0, 'cum_total': 0,
+    'r1_kpis': [], 'r2_kpis': [], 'combined_kpis': [],
+    'sustain': {}
+}
+try:
+    _kw = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
+    _ks = None
+    for _name in _kw.sheetnames:
+        if _name.strip().upper() == 'KPI':
+            _ks = _kw[_name]; break
+    if _ks:
+        _kr = list(_ks.iter_rows(values_only=True))
+        def _kn(v, fb=0):
+            if v is None: return fb
+            if isinstance(v, str) and ('#' in v or 'REF' in v): return fb
+            if isinstance(v, (int, float)): return v
+            return fb
+        # Month
+        _hdr = _kr[6][3] if len(_kr) > 6 else None
+        if _hdr and '-' in str(_hdr):
+            kpi_data['month'] = str(_hdr).split('-',1)[1].strip()
+        kpi_data['days_lti_month'] = _kn(_kr[4][5])
+        kpi_data['days_lti_total'] = _kn(_kr[4][10])
+        # Manpower
+        for _i in [9,10,11,12,13,14]:
+            _r = _kr[_i]
+            if _r[1]:
+                kpi_data['manpower'].append({'team': str(_r[1]).strip(), 'mp': _kn(_r[3]), 'hrs': _kn(_r[5])})
+        kpi_data['total_mp']  = sum(_m['mp']  for _m in kpi_data['manpower'])
+        kpi_data['total_hrs'] = sum(_m['hrs'] for _m in kpi_data['manpower'])
+        kpi_data['cum_total'] = _kn(_kr[13][9])
+        # KPI blocks
+        def _get_kpis(start):
+            out=[]
+            for _i in range(start, start+20):
+                if _i >= len(_kr): break
+                _r = _kr[_i]
+                if isinstance(_r[6], str) and _r[6] not in ('HSE Indicator',):
+                    out.append({'name': _r[6].strip(), 'last': _kn(_r[7]), 'current': _kn(_r[8]), 'cum': _kn(_r[9])})
+                else: break
+            return out
+        kpi_data['r1_kpis']       = _get_kpis(57)
+        kpi_data['r2_kpis']       = _get_kpis(138)
+        kpi_data['combined_kpis'] = _get_kpis(219)
+        # Sustainability
+        kpi_data['sustain'] = {
+            'meetings': _kn(_kr[312][2]),
+            'grievance_recv': _kn(_kr[313][2]),
+            'grievance_resolved': _kn(_kr[315][2]),
+            'gender_ratio': str(_kr[316][2] or '—'),
+            'female': _kn(_kr[317][2]),
+            'male': _kn(_kr[318][2]),
+            'wp_incidents': _kn(_kr[319][2]),
+            'spill_total': _kn(_kr[312][9]),
+        }
+        print(f"  ✅ KPI: {kpi_data['month']} ({len(kpi_data['r1_kpis'])} R1 + {len(kpi_data['r2_kpis'])} R2 + {len(kpi_data['combined_kpis'])} Combined)")
+    _kw.close()
+except Exception as _e:
+    print(f"  ⚠️ KPI: {_e}")
+
 # ─────────────────────────────────────────────────────────
 # CALCULATE STATS
 # ─────────────────────────────────────────────────────────
@@ -322,6 +386,37 @@ cncr_data_json = json.dumps([(i+1, str(r[1]).strip() if len(r)>1 else '', str(r[
 print("🏗️ Building HTML with enhanced filters...")
 
 # Create HTML template string using triple quotes but careful with braces
+
+
+# ── KPI HTML BUILDERS ─────────────────────────────────────
+_LAGGING_K = ['Fatality','Permanent disability','Lost Time','Restricted Work','Medical Treatment','First Aid','Property Damage','Enviro','Company Image','Other','HIPO','Near Miss']
+def _is_lag(name):
+    return any(l.lower() in name.lower() for l in _LAGGING_K)
+
+def _kpi_table(kpis, title, color):
+    rows_h = ''
+    for k in kpis:
+        is_lag = _is_lag(k['name'])
+        if is_lag:
+            dot = '<span style="display:inline-block;width:7px;height:7px;background:#ef4444;border-radius:50%;margin-right:6px;vertical-align:middle;"></span>' if k['current']>0 else '<span style="display:inline-block;width:7px;height:7px;background:#10b981;border-radius:50%;margin-right:6px;vertical-align:middle;"></span>'
+            cls = 'red' if k['current']>0 else 'green'
+        else:
+            dot = ''
+            cls = 'blue'
+        rows_h += f'<tr><td class="bold" style="font-size:11px;">{dot}{k["name"]}</td><td class="num">{k["last"]}</td><td class="num {cls}">{k["current"]}</td><td class="num blue">{k["cum"]}</td></tr>'
+    return f'''<div class="kpi-tbl-card">
+      <div class="kpi-tbl-hdr" style="color:{color};">{title}</div>
+      <table class="kpi-tbl"><thead><tr><th>Indicator</th><th class="num">Last</th><th class="num">Current</th><th class="num">Cum.</th></tr></thead><tbody>{rows_h}</tbody></table>
+    </div>'''
+
+_kpi_r1_html  = _kpi_table(kpi_data['r1_kpis'],       'RIYAH 1',                '#60a5fa')
+_kpi_r2_html  = _kpi_table(kpi_data['r2_kpis'],       'RIYAH 2',                '#34d399')
+_kpi_cmb_html = _kpi_table(kpi_data['combined_kpis'], 'RIYAH 1 + 2 (COMBINED)', '#fbbf24')
+
+_mp_rows = ''
+for _m in kpi_data['manpower']:
+    _mp_rows += f'<tr><td class="bold">{_m["team"]}</td><td class="num">{_m["mp"]:,}</td><td class="num blue">{_m["hrs"]:,}</td></tr>'
+
 html_template = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -750,6 +845,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
     <button class="tab-btn" onclick="showTab('ncr',this)">Internal NCRs <span class="count">""" + str(ncr_total) + """</span></button>
     <button class="tab-btn" onclick="showTab('cncr',this)">Client NCRs <span class="count">""" + str(cncr_total) + """</span></button>
     <button class="tab-btn" onclick="showTab('calendar',this)">📅 Calendar <span class="count">""" + cal_month + ' ' + str(cal_year) + """</span></button>
+    <button class="tab-btn" onclick="showTab('kpi',this)">📊 Last Month KPI <span class="count">""" + kpi_data['month'] + """</span></button>
   </div>
 </div>
 
@@ -1453,6 +1549,86 @@ function calOpen(d,acts){
 var _cOST=window.showTab;
 window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
 </script>
+<!-- KPI PANEL -->
+<div class="panel" id="panel-kpi">
+  <div class="panel-body">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#f1f5f9;">📊 Monthly HSE KPI Dashboard</div>
+        <div style="font-size:12px;color:#64748b;margin-top:4px;">Riyah 1 &amp; Riyah 2 Wind IPP · Last Month Statistics</div>
+      </div>
+      <div style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:8px 20px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#93c5fd;">""" + kpi_data['month'] + """</div>
+    </div>
+
+    <!-- Highlights -->
+    <div class="kpi-section-title">📌 Project Highlights</div>
+    <div class="kpi-grid">
+      <div class="kpi-c green"><div class="kpi-l">Days w/o LTI (Month)</div><div class="kpi-v green">""" + str(kpi_data['days_lti_month']) + """</div><div class="kpi-s">""" + kpi_data['month'] + """</div></div>
+      <div class="kpi-c blue"><div class="kpi-l">Days w/o LTI (Total)</div><div class="kpi-v blue">""" + str(kpi_data['days_lti_total']) + """</div><div class="kpi-s">Since 14/02/2025</div></div>
+      <div class="kpi-c amber"><div class="kpi-l">Total Manpower</div><div class="kpi-v amber">""" + f"{kpi_data['total_mp']:,}" + """</div><div class="kpi-s">All teams</div></div>
+      <div class="kpi-c purple"><div class="kpi-l">Monthly Manhours</div><div class="kpi-v purple">""" + f"{kpi_data['total_hrs']:,}" + """</div><div class="kpi-s">""" + kpi_data['month'] + """</div></div>
+      <div class="kpi-c teal"><div class="kpi-l">Cumulative Hours</div><div class="kpi-v teal">""" + f"{kpi_data['cum_total']:,}" + """</div><div class="kpi-s">Project to date</div></div>
+    </div>
+
+    <!-- Manpower table -->
+    <div class="kpi-section-title">👥 Personnel on Site</div>
+    <div class="kpi-tbl-card" style="margin-bottom:24px;">
+      <div class="kpi-tbl-hdr">Manpower &amp; Hours Distribution</div>
+      <table class="kpi-tbl"><thead><tr><th>Team</th><th class="num">Manpower</th><th class="num">Manhours</th></tr></thead>
+        <tbody>""" + _mp_rows + """<tr style="background:rgba(59,130,246,.06);"><td class="bold" style="color:#60a5fa;">SUB-TOTAL</td><td class="num blue">""" + f"{kpi_data['total_mp']:,}" + """</td><td class="num blue">""" + f"{kpi_data['total_hrs']:,}" + """</td></tr></tbody></table>
+    </div>
+
+    <!-- HSE 3 cols -->
+    <div class="kpi-section-title">⚠️ HSE Statistics — Lagging &amp; Leading Indicators</div>
+    <div class="kpi-three-col">
+      """ + _kpi_r1_html + """
+      """ + _kpi_r2_html + """
+      """ + _kpi_cmb_html + """
+    </div>
+
+    <!-- Sustainability -->
+    <div class="kpi-section-title" style="margin-top:24px;">🌱 Sustainability &amp; E&amp;S KPIs</div>
+    <div class="kpi-grid">
+      <div class="kpi-c blue"><div class="kpi-l">Stakeholder Meetings</div><div class="kpi-v blue">""" + str(kpi_data['sustain'].get('meetings',0)) + """</div></div>
+      <div class="kpi-c amber"><div class="kpi-l">Grievances Received</div><div class="kpi-v amber">""" + str(kpi_data['sustain'].get('grievance_recv',0)) + """</div></div>
+      <div class="kpi-c green"><div class="kpi-l">Grievances Resolved</div><div class="kpi-v green">""" + str(kpi_data['sustain'].get('grievance_resolved',0)) + """</div></div>
+      <div class="kpi-c red"><div class="kpi-l">Spill Incidents</div><div class="kpi-v red">""" + str(kpi_data['sustain'].get('spill_total',0)) + """</div></div>
+      <div class="kpi-c purple"><div class="kpi-l">Workplace Incidents</div><div class="kpi-v purple">""" + str(kpi_data['sustain'].get('wp_incidents',0)) + """</div></div>
+      <div class="kpi-c teal"><div class="kpi-l">Gender Ratio (M:F)</div><div class="kpi-v teal" style="font-size:22px;">""" + str(kpi_data['sustain'].get('gender_ratio','—')) + """</div><div class="kpi-s">M """ + str(kpi_data['sustain'].get('male',0)) + """ · F """ + str(kpi_data['sustain'].get('female',0)) + """</div></div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.kpi-section-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.07);}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px;}
+.kpi-c{background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;position:relative;overflow:hidden;}
+.kpi-c::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0;}
+.kpi-c.green::after{background:linear-gradient(90deg,#10b981,#34d399);}
+.kpi-c.red::after{background:linear-gradient(90deg,#ef4444,#f87171);}
+.kpi-c.blue::after{background:linear-gradient(90deg,#3b82f6,#06b6d4);}
+.kpi-c.amber::after{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.kpi-c.purple::after{background:linear-gradient(90deg,#8b5cf6,#a78bfa);}
+.kpi-c.teal::after{background:linear-gradient(90deg,#06b6d4,#67e8f9);}
+.kpi-l{font-size:10px;color:#64748b;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;}
+.kpi-v{font-family:'Syne',sans-serif;font-size:30px;font-weight:700;line-height:1;}
+.kpi-v.green{color:#34d399;}.kpi-v.red{color:#f87171;}.kpi-v.blue{color:#60a5fa;}.kpi-v.amber{color:#fbbf24;}.kpi-v.purple{color:#a78bfa;}.kpi-v.teal{color:#67e8f9;}
+.kpi-s{font-size:11px;color:#64748b;margin-top:5px;}
+.kpi-tbl-card{background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;}
+.kpi-tbl-hdr{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.07);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;}
+.kpi-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.kpi-tbl thead th{padding:10px 14px;text-align:left;font-size:10px;color:#64748b;letter-spacing:.07em;text-transform:uppercase;font-weight:600;background:rgba(255,255,255,.02);border-bottom:1px solid rgba(255,255,255,.07);}
+.kpi-tbl tbody td{padding:10px 14px;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,.04);}
+.kpi-tbl tbody tr:hover{background:rgba(255,255,255,.025);}
+.kpi-tbl .num{font-family:'Syne',sans-serif;font-weight:700;text-align:center;}
+.kpi-tbl .green{color:#34d399;}.kpi-tbl .red{color:#f87171;}.kpi-tbl .blue{color:#60a5fa;}
+.kpi-tbl .bold{color:#f1f5f9;font-weight:500;}
+.kpi-three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+@media(max-width:900px){.kpi-three-col{grid-template-columns:1fr;}}
+</style>
+
 <footer>Riyah 1 &amp; 2 Wind IPP Project &nbsp;·&nbsp; Document Dashboard &nbsp;·&nbsp; Developed By Shaguf Ahmed</footer>
 </body>
 </html>"""
