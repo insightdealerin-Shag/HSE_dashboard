@@ -425,7 +425,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
     <button class="tab-btn" onclick="showTab('r2',this)">Riyah 2 Docs <span class="count">49</span></button>
     <button class="tab-btn" onclick="showTab('ncr',this)">Internal NCRs <span class="count">52</span></button>
     <button class="tab-btn" onclick="showTab('cncr',this)">Client NCRs <span class="count">11</span></button>
-    <button class="tab-btn" onclick="showTab('calendar',this)">📅 Calendar <span class="count">May 2026</span></button>
+    <button class="tab-btn" onclick="showTab('calendar',this);calBuild()">📅 Calendar <span class="count">May 2026</span></button>
   </div>
 </div>
 
@@ -1123,9 +1123,7 @@ function calOpen(d,acts){
   document.getElementById('calModal').style.display='flex';
 }
 
-// Hook showTab
-var _cOST=window.showTab;
-window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
+// calBuild called directly from tab button onclick - no hook needed
 </script>
 <footer>Riyah 1 &amp; 2 Wind IPP Project &nbsp;·&nbsp; Document Dashboard &nbsp;·&nbsp; Developed By Shaguf Ahmed</footer>
 </body>
