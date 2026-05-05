@@ -102,47 +102,6 @@ except:
 wb.close()
 print(f"  ✅ R1: {len(r1_rows)} | R2: {len(r2_rows)} | NCRs: {len(ncr_rows)} | Client NCRs: {len(cncr_rows)}")
 
-# ── CALENDAR (Date | Activity format) ─────────────────────
-import datetime as _dt
-cal_data  = {}   # {date_str: "act1\nact2\n..."}
-cal_month = 'May'
-cal_year  = '2026'
-_MNL = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-try:
-    _cw = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
-    _cs = _cw['Calendar']
-    _cr = list(_cs.iter_rows(values_only=True))
-    for _r in _cr[1:]:   # skip header row
-        _dv = _r[0] if len(_r) > 0 else None
-        _av = _r[1] if len(_r) > 1 else None
-        if not _dv or not _av: continue
-        _as = str(_av).strip()
-        if _as in ('','None','Activity'): continue
-        # Parse date string e.g. "27-Apr-2026"
-        _key = None
-        if isinstance(_dv, (_dt.datetime, _dt.date)):
-            _key = f"{_dv.year}-{_dv.month:02d}-{_dv.day:02d}"
-            cal_month = _MNL[_dv.month]; cal_year = str(_dv.year)
-        elif isinstance(_dv, str):
-            for _fmt in ('%d-%b-%Y','%d/%m/%Y','%Y-%m-%d','%d-%m-%Y','%d %b %Y'):
-                try:
-                    _pd = _dt.datetime.strptime(_dv.strip(), _fmt)
-                    _key = f"{_pd.year}-{_pd.month:02d}-{_pd.day:02d}"
-                    cal_month = _MNL[_pd.month]; cal_year = str(_pd.year)
-                    break
-                except: pass
-        if not _key: continue
-        if _as == 'Week Off':
-            cal_data[_key] = 'Week Off'
-        elif _key in cal_data and cal_data[_key] != 'Week Off':
-            cal_data[_key] += '\n' + _as
-        elif _key not in cal_data:
-            cal_data[_key] = _as
-    _cw.close()
-    print(f"  ✅ Calendar: {len(cal_data)} days ({cal_month} {cal_year})")
-except Exception as _e:
-    print(f"  ⚠️ Calendar: {_e}")
-
 # ─────────────────────────────────────────────────────────
 # CALCULATE STATS
 # ─────────────────────────────────────────────────────────
@@ -767,7 +726,6 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
     <button class="tab-btn" onclick="showTab('r2',this)">Riyah 2 Docs <span class="count">""" + str(len(r2_rows)) + """</span></button>
     <button class="tab-btn" onclick="showTab('ncr',this)">Internal NCRs <span class="count">""" + str(ncr_total) + """</span></button>
     <button class="tab-btn" onclick="showTab('cncr',this)">Client NCRs <span class="count">""" + str(cncr_total) + """</span></button>
-    <button class="tab-btn" onclick="showTab('calendar',this)">📅 Calendar <span class="count">""" + cal_month + ' ' + cal_year + """</span></button>
   </div>
 </div>
 
@@ -1368,132 +1326,6 @@ function fixR1OnTabClick() {
 
 // Call this function
 fixR1OnTabClick();
-
-// ── Hook showTab for calendar ─────────────────────────
-(function(){
-  var _o = window.showTab;
-  window.showTab = function(id, btn) {
-    _o(id, btn);
-    if(id === 'calendar') setTimeout(buildCal, 30);
-  };
-})();
-</script>
-
-<!-- ══ CALENDAR PANEL ══ -->
-<div class="panel" id="panel-calendar">
-  <div class="panel-body">
-
-    <!-- Header -->
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;flex-wrap:wrap;gap:12px;">
-      <div>
-        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);">📅 Monthly HSE Activity Plan</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px;">Click any day to view planned activities</div>
-      </div>
-      <div style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:8px 20px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#93c5fd;">""" + cal_month + ' ' + cal_year + """</div>
-    </div>
-
-    <!-- Calendar Grid -->
-    <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:24px;"></div>
-
-    <!-- Modal -->
-    <div id="calModal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.72);z-index:9999;justify-content:center;align-items:center;">
-      <div style="background:#141c2e;border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:28px 32px;max-width:520px;width:92%;max-height:82vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.6);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
-          <div>
-            <div id="calModalDay" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#f1f5f9;"></div>
-            <div id="calModalDate" style="font-size:11px;color:#64748b;margin-top:2px;"></div>
-          </div>
-          <button onclick="document.getElementById('calModal').style.display='none'" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:#94a3b8;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
-        </div>
-        <div id="calModalList"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<style>
-.cal-hdr{text-align:center;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:9px 4px;background:rgba(255,255,255,.03);border-radius:8px;}
-.cal-cell{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 9px;min-height:95px;position:relative;overflow:hidden;transition:all .2s;}
-.cal-cell.c-click{cursor:pointer;}
-.cal-cell.c-click:hover{border-color:#3b82f6;background:rgba(59,130,246,.07);transform:translateY(-2px);box-shadow:0 6px 24px rgba(59,130,246,.14);}
-.cal-cell.c-off{background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.12);}
-.cal-cell.c-today{border-color:#3b82f6!important;background:rgba(59,130,246,.1);}
-.cal-cell.c-dim{opacity:.22;}
-.cal-cell.c-click::after{content:'';position:absolute;bottom:7px;right:7px;width:6px;height:6px;background:#10b981;border-radius:50%;}
-.cal-cell.c-off::after,.cal-cell.c-dim::after{display:none;}
-.c-num{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:5px;}
-.c-today .c-num{color:#60a5fa;}
-.c-tod-lbl{position:absolute;top:5px;right:7px;font-size:8px;font-weight:700;color:#3b82f6;letter-spacing:.07em;}
-.c-off-lbl{font-size:11px;font-weight:600;color:#f87171;margin-top:3px;}
-.c-prev{font-size:10px;color:var(--muted);line-height:1.55;margin-top:3px;}
-</style>
-
-<script>
-const _CAL = """ + json.dumps(cal_data) + """;
-const _CM  = '""" + cal_month + """';
-const _CY  = parseInt('""" + cal_year + """');
-const _MNO = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
-const _MNF = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
-const _DNF = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const _DHD = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
-
-function buildCal() {
-  const g = document.getElementById('calGrid');
-  if(!g) return;
-  g.innerHTML = '';
-  _DHD.forEach(d => {
-    const h = document.createElement('div');
-    h.className='cal-hdr'; h.textContent=d; g.appendChild(h);
-  });
-  const mNum = _MNO[_CM]||5;
-  const now  = new Date();
-  const tod  = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-  const first = new Date(_CY, mNum-1, 1);
-  const start = new Date(first);
-  start.setDate(first.getDate()-(first.getDay()===0?6:first.getDay()-1));
-
-  for(let i=0; i<42; i++){
-    const d  = new Date(start); d.setDate(start.getDate()+i);
-    const ds = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    const inMo  = d.getMonth()+1===mNum && d.getFullYear()===_CY;
-    const acts  = _CAL[ds]||'';
-    const isOff = acts==='Week Off'||(d.getDay()===5&&!acts);
-    const isTod = ds===tod;
-    const hasTsk= acts&&acts!=='Week Off'&&acts.trim()!=='';
-
-    const cell = document.createElement('div');
-    cell.className='cal-cell'+(isOff?' c-off':'')+(isTod?' c-today':'')+(!inMo?' c-dim':'')+(hasTsk&&!isOff?' c-click':'');
-
-    const num=document.createElement('div'); num.className='c-num'; num.textContent=d.getDate(); cell.appendChild(num);
-    if(isTod){const tl=document.createElement('div');tl.className='c-tod-lbl';tl.textContent='TODAY';cell.appendChild(tl);}
-
-    if(isOff){
-      const ol=document.createElement('div'); ol.className='c-off-lbl'; ol.textContent='🔴 Week Off'; cell.appendChild(ol);
-    } else if(hasTsk){
-      const lines=acts.split('\n').filter(l=>l.trim()).slice(0,2);
-      const pv=document.createElement('div'); pv.className='c-prev';
-      pv.textContent=lines.map(l=>l.replace(/^\d+[-.)]?\s*/,'').trim()).join(' · ');
-      cell.appendChild(pv);
-      cell.addEventListener('click',()=>openCalModal(d,acts));
-    }
-    g.appendChild(cell);
-  }
-}
-
-function openCalModal(d, acts){
-  document.getElementById('calModalDay').textContent  = _DNF[d.getDay()];
-  document.getElementById('calModalDate').textContent = d.getDate()+' '+_MNF[d.getMonth()+1]+' '+d.getFullYear();
-  const lines=acts.split('\n').filter(l=>l.trim());
-  let html='';
-  lines.forEach((l,i)=>{
-    const t=l.replace(/^\d+[-.)]?\s*/,'').trim(); if(!t)return;
-    html+=`<div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);">
-      <div style="min-width:24px;height:24px;background:rgba(59,130,246,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#60a5fa;flex-shrink:0;">${i+1}</div>
-      <div style="font-size:13px;color:#cbd5e1;line-height:1.6;padding-top:3px;">${t}</div></div>`;
-  });
-  document.getElementById('calModalList').innerHTML=html||'<div style="color:#64748b;padding:10px 0;">No activities</div>';
-  document.getElementById('calModal').style.display='flex';
-}
 </script>
 </body>
 </html>"""
