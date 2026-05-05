@@ -708,10 +708,10 @@ new Chart(document.getElementById('ovCompareChart'), {
 
 new Chart(document.getElementById('ovContractorChart'), {
   type:'bar',
-  data:{labels:['TCC', 'SHC', 'JUJIE', 'RMM', 'GOLD WIND'],
+  data:{labels:['TCC', 'SHC', 'JUJIE', 'RMM', 'GOLD WIND', 'ANSON'],
     datasets:[
-      {label:'Closed', data:[20, 10, 5, 5, 0], backgroundColor:C.green+'cc', borderRadius:2, stack:'s'},
-      {label:'Open', data:[1, 0, 4, 3, 4], backgroundColor:C.red+'cc', borderRadius:2, stack:'s'}
+      {label:'Closed', data:[20, 10, 5, 5, 0, 0], backgroundColor:C.green+'cc', borderRadius:2, stack:'s'},
+      {label:'Open', data:[1, 0, 4, 3, 4, 1], backgroundColor:C.red+'cc', borderRadius:2, stack:'s'}
     ]},
   options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}, ticks:{color:'#64748b'}, stacked:true}, y:{grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#64748b'}, stacked:true}}}
 });
@@ -763,10 +763,10 @@ new Chart(document.getElementById('r2PrevChart'), {
 // NCR CHARTS
 new Chart(document.getElementById('ncrContChart'), {
   type:'bar',
-  data:{labels:['TCC', 'SHC', 'JUJIE', 'RMM', 'GOLD WIND'],
+  data:{labels:['TCC', 'SHC', 'JUJIE', 'RMM', 'GOLD WIND', 'ANSON'],
     datasets:[
-      {label:'Closed', data:[20, 10, 5, 5, 0], backgroundColor:C.green+'bb', borderRadius:2, stack:'s'},
-      {label:'Open', data:[1, 0, 4, 3, 4], backgroundColor:C.red+'bb', borderRadius:2, stack:'s'}
+      {label:'Closed', data:[20, 10, 5, 5, 0, 0], backgroundColor:C.green+'bb', borderRadius:2, stack:'s'},
+      {label:'Open', data:[1, 0, 4, 3, 4, 1], backgroundColor:C.red+'bb', borderRadius:2, stack:'s'}
     ]},
   options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}, ticks:{color:'#64748b'}, stacked:true}, y:{grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#64748b'}, stacked:true}}}
 });

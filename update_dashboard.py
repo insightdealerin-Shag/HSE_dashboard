@@ -299,7 +299,7 @@ if ncr_rows:
             last_ncr_desc = str(last_ncr[7]).strip()[:50]
 
 # Contractors
-contractors = ['TCC', 'SHC', 'JUJIE', 'RMM', 'GOLD WIND']
+contractors = ['TCC', 'SHC', 'JUJIE', 'RMM', 'GOLD WIND', 'ANSON']
 ncr_closed_data = [ncr_contractor_closed.get(c, 0) for c in contractors]
 ncr_open_data = [ncr_contractor_open.get(c, 0) for c in contractors]
 
