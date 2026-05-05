@@ -102,6 +102,29 @@ except:
 wb.close()
 print(f"  ✅ R1: {len(r1_rows)} | R2: {len(r2_rows)} | NCRs: {len(ncr_rows)} | Client NCRs: {len(cncr_rows)}")
 
+# ── CALENDAR READING ──────────────────────────────────────
+import datetime as _dt, json as _json
+cal_data = {}
+cal_month = 'May'; cal_year = 2026; cal_month_num = 5
+_MNL = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+try:
+    _cw = openpyxl.load_workbook(EXCEL_PATH, data_only=True, read_only=True)
+    for _r in list(_cw['Calendar'].iter_rows(values_only=True))[1:]:
+        _dv = _r[0]; _av = str(_r[1]).strip() if len(_r)>1 and _r[1] else ''
+        if not _dv or not _av: continue
+        try:
+            _pd = _dt.datetime.strptime(str(_dv).strip(), '%d-%b-%Y')
+            _k  = f"{_pd.year}-{_pd.month:02d}-{_pd.day:02d}"
+            cal_month = _MNL[_pd.month]; cal_year = _pd.year; cal_month_num = _pd.month
+        except: continue
+        if _av == 'Week Off': cal_data[_k] = 'Week Off'
+        elif _k in cal_data and cal_data[_k] != 'Week Off': cal_data[_k] += '|' + _av
+        else: cal_data[_k] = _av
+    _cw.close()
+    print(f"  ✅ Calendar: {len(cal_data)} days ({cal_month} {cal_year})")
+except Exception as _e:
+    print(f"  ⚠️ Calendar: {_e}")
+
 # ─────────────────────────────────────────────────────────
 # CALCULATE STATS
 # ─────────────────────────────────────────────────────────
@@ -726,7 +749,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
     <button class="tab-btn" onclick="showTab('r2',this)">Riyah 2 Docs <span class="count">""" + str(len(r2_rows)) + """</span></button>
     <button class="tab-btn" onclick="showTab('ncr',this)">Internal NCRs <span class="count">""" + str(ncr_total) + """</span></button>
     <button class="tab-btn" onclick="showTab('cncr',this)">Client NCRs <span class="count">""" + str(cncr_total) + """</span></button>
-    <button class="tab-btn" onclick="showTab('calendar',this);calBuild()">📅 Calendar <span class="count">May 2026</span></button>
+    <button class="tab-btn" onclick="showTab('calendar',this)">📅 Calendar <span class="count">""" + cal_month + ' ' + str(cal_year) + """</span></button>
   </div>
 </div>
 
@@ -1336,7 +1359,7 @@ fixR1OnTabClick();
         <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text)">📅 Monthly HSE Activity Plan</div>
         <div style="font-size:12px;color:var(--muted);margin-top:4px;">Click any day to view planned activities</div>
       </div>
-      <div style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:8px 20px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#93c5fd;">May 2026</div>
+      <div style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:8px 20px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#93c5fd;">""" + cal_month + ' ' + str(cal_year) + """</div>
     </div>
     <div class="cal-grid" id="calGrid"></div>
     <div id="calModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.75);z-index:9999;justify-content:center;align-items:center;" onclick="if(event.target===this)this.style.display='none'">
@@ -1371,7 +1394,9 @@ fixR1OnTabClick();
 .cal-prev{font-size:10px;color:#64748b;line-height:1.5;margin-top:3px;}
 </style>
 <script>
-var CAL_DATA={"2026-05-01": "Week Off", "2026-05-02": "Fire extinguisher inspection|Vehicle inspection|First Aid Box inspection|Weekly HSE Meeting (Sub-con) + Knowledge sharing session", "2026-05-03": "SPV Management Walkthrough|PPE inspection|Fire Safety Awareness|Chemical storage area inspection", "2026-05-04": "ID card and HSE Passport verification|Equipment inspection|Ambulance inspection|Ladder and Scaffold inspection|Weekly HSE report preparation and submission", "2026-05-05": "Inspection of Lifting tools and accessories|Excavation Awareness", "2026-05-06": "DG & DB inspection|PTW Audit|Onsite training|Electrical tools inspection campaign", "2026-05-07": "Welfare facility inspection|Awareness on Grievances|5S inspection|Weekly Housekeeping campaign site|Safety campaign on site", "2026-05-08": "Week Off", "2026-05-09": "Fire extinguisher inspection|Vehicle inspection|First Aid Box inspection|Weekly HSE Meeting (Sub-con) + Knowledge sharing session|Onsite training", "2026-05-10": "SPV Management Walkthrough|Site office Inspection|Report preparation and compliance|Electrical Safety Awareness|Compressed gas cylinder inspection|PPE inspection", "2026-05-11": "Fire extinguisher inspection|Vehicle inspection|First Aid Box inspection|Weekly HSE Meeting (Sub-con) + Knowledge sharing session|Onsite training", "2026-05-12": "Inspection of WAH tools|Documentation and data control|Compressed gas cylinder inspection|Awareness Training Emergency response plan", "2026-05-13": "Inspection of Lifting tools and accessories|Weekly Report|Mechanical Lifting Awareness|Lifting tools inspection|Crane inspection|Working at height awareness training|Full body double lanyard safety harness & PPE inspection", "2026-05-14": "Walkthrough compliance report submission|Power tool inspection|Electrical inspection|Authorized electrical person document verification|Electrical hand gloves inspection", "2026-05-15": "Week Off", "2026-05-16": "DG & DB Inspection|Mock Drill|5S inspection|Waste Management Awareness|Onsite training|Safety committee meeting with respective sub contractor|Reward & Recognition", "2026-05-17": "SPV Management Walkthrough|Welfare facility inspection|Fire extinguisher inspection|Vehicle inspection|First Aid Box inspection|Weekly HSE Meeting (Sub-con) + Knowledge sharing session", "2026-05-18": "Chemicals storage and Handling Inspection|Report preparation and compliance|PPE inspection|Hand & Power Tools Awareness", "2026-05-19": "Document Audit|Welfare facility Audit/Inspection|Awareness Training Near Miss Reporting", "2026-05-20": "SPV Management Walkthrough|Inspection of Powertools|LOTO Awareness|Electrical Inspection with electrical competent person", "2026-05-21": "Road traffic signs and road condition|Monthly Report preparation|JM Audit|MEWP inspection", "2026-05-22": "Week Off", "2026-05-23": "Welfare facility inspection|Mock Drill|5S inspection|Human resources Awareness", "2026-05-24": "SPV Management Walkthrough|Fire extinguisher inspection|Vehicle inspection|First Aid Box inspection|Weekly HSE Meeting (Sub-con) + Knowledge sharing session", "2026-05-25": "Inspection of road condition|Report preparation and compliance|Onsite Training on Lifting Operation|PPE inspection|Emergency Response Awareness|Onsite training|Height Rescue kit inspection", "2026-05-26": "Vehicle inspection|Equipment inspection|Ambulance inspection|Life saving awareness session|HSE policy awareness session", "2026-05-27": "SPV Management Walkthrough|Inspection of Lifting tools and accessories|Stop work authority Awareness|Document verification", "2026-05-28": "ID card and HSE Passport verification|Equipment inspection|Ambulance inspection|Ladder and Scaffold inspection|Weekly HSE report preparation and submission", "2026-05-29": "Week Off", "2026-05-30": "DG & DB Inspection|Mock Drill|5S inspection|Waste Management Awareness|Onsite training", "2026-05-31": "SPV Management Walkthrough|Road traffic signs and road condition|Monthly Report preparation|JM Audit|MEWP inspection|Defensive driving safety training|Light vehicles inspection"};
+var CAL_DATA=""" + _json.dumps(cal_data) + """;
+var CAL_MONTH=""" + str(cal_month_num) + """;
+var CAL_YEAR=""" + str(cal_year) + """;
 var CAL_MNF=['','January','February','March','April','May','June','July','August','September','October','November','December'];
 var CAL_DNF=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var CAL_DHD=['MON','TUE','WED','THU','FRI','SAT','SUN'];
@@ -1383,13 +1408,13 @@ function calBuild(){
   CAL_DHD.forEach(function(d){var h=document.createElement('div');h.className='cal-hdr';h.textContent=d;g.appendChild(h);});
   var now=new Date();
   var tod=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-  var first=new Date(2026,4,1);
+  var first=new Date(CAL_YEAR,CAL_MONTH-1,1);
   var start=new Date(first);
   start.setDate(first.getDate()-(first.getDay()===0?6:first.getDay()-1));
   for(var i=0;i<42;i++){
     var d=new Date(start);d.setDate(start.getDate()+i);
     var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    var inMo=d.getMonth()===4&&d.getFullYear()===2026;
+    var inMo=d.getMonth()+1===CAL_MONTH&&d.getFullYear()===CAL_YEAR;
     var acts=CAL_DATA[ds]||'';
     var isOff=acts==='Week Off';
     var isTod=ds===tod;
@@ -1424,7 +1449,9 @@ function calOpen(d,acts){
   document.getElementById('calModal').style.display='flex';
 }
 
-// calBuild called directly from tab button onclick - no hook needed
+// Hook showTab
+var _cOST=window.showTab;
+window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
 </script>
 <footer>Riyah 1 &amp; 2 Wind IPP Project &nbsp;·&nbsp; Document Dashboard &nbsp;·&nbsp; Developed By Shaguf Ahmed</footer>
 </body>
