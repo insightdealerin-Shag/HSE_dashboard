@@ -189,6 +189,56 @@ try:
 except Exception as _e:
     print(f"  ⚠️ KPI: {_e}")
 
+# ── KPI E&S READING ──────────────────────────────────────
+import json as _json
+es_r1 = {}; es_r2 = {}; es_comb = {}
+MONTHS_ES = ['Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26','Apr-26']
+try:
+    _ew = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
+    _esw = None
+    for _nm in _ew.sheetnames:
+        if _nm.strip().upper() == 'KPI E&S': _esw = _ew[_nm]; break
+    if _esw:
+        _er = list(_esw.iter_rows(values_only=True))
+        def _en(v):
+            if v is None: return 0
+            if isinstance(v, str): return 0
+            if isinstance(v, (int, float)): return v
+            return 0
+        # R1: rows 2-41 (idx 2-40), monthly=col D-Q (idx 3-18), TOTAL=idx 27
+        def _r1(i): r=_er[i]; return {'monthly':[_en(r[j]) for j in range(3,19)],'total':_en(r[27])}
+        # R2: rows 45-84 (idx 44-83), same structure
+        def _r2(i): r=_er[i]; return {'monthly':[_en(r[j]) for j in range(3,19)],'total':_en(r[27])}
+        # Combined: rows 88-127 (idx 87-126), value=col D (idx 3)
+        def _cb(i): return _en(_er[i][3])
+        es_r1 = {
+            'penalties':    _r1(2),  'audits':       _r1(5),
+            'stakeholder':  _r1(6),  'grievances':   _r1(7),
+            'diesel':       _r1(9),  'freshwater':   _r1(16),
+            'haz_total':    _r1(20), 'nonhaz_total': _r1(24),
+            'waste_cost':   _r1(25), 'spills':       _r1(26),
+            'wastewater':   _r1(40),
+        }
+        es_r2 = {
+            'penalties':    _r2(45), 'audits':       _r2(48),
+            'stakeholder':  _r2(49), 'grievances':   _r2(50),
+            'diesel':       _r2(52), 'freshwater':   _r2(59),
+            'haz_total':    _r2(63), 'nonhaz_total': _r2(67),
+            'waste_cost':   _r2(68), 'spills':       _r2(69),
+            'wastewater':   _r2(83),
+        }
+        es_comb = {
+            'penalties':    _cb(88),  'audits':       _cb(91),
+            'stakeholder':  _cb(92),  'grievances':   _cb(93),
+            'diesel':       _en(_er[52][27]) + _en(_er[9][27]),  # R1+R2 sum (sheet formula bug fix)
+            'freshwater':   _cb(102), 'haz_total':    _cb(106),
+            'nonhaz_total': _cb(110), 'waste_cost':   _cb(111),
+            'spills':       _cb(112), 'wastewater':   _cb(126),
+        }
+        print(f"  ✅ E&S KPI: audits={es_comb['audits']} | diesel={es_comb['diesel']:,.0f}L | water={es_comb['freshwater']:,.0f}m³")
+    _ew.close()
+except Exception as _e: print(f"  ⚠️ E&S: {_e}")
+
 # ─────────────────────────────────────────────────────────
 # CALCULATE STATS
 # ─────────────────────────────────────────────────────────
@@ -1553,6 +1603,14 @@ window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
 <div class="panel" id="panel-kpi">
   <div class="panel-body">
 
+    <!-- Sub-tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;">
+      <button id="kstab-hse" onclick="showKTab('hse')" style="padding:10px 20px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.4);border-radius:8px;color:#f1f5f9;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;">🦺 HSE KPIs</button>
+      <button id="kstab-es" onclick="showKTab('es')" style="padding:10px 20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#64748b;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;">🌱 E&amp;S KPIs</button>
+    </div>
+
+    <!-- HSE SUB-PANEL -->
+    <div id="kpanel-hse" style="display:block;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
       <div>
         <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#f1f5f9;">📊 Monthly HSE KPI Dashboard</div>
@@ -1588,7 +1646,7 @@ window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
     </div>
 
     <!-- Sustainability -->
-    <div class="kpi-section-title" style="margin-top:24px;">🌱 Sustainability &amp; E&amp;S KPIs</div>
+    <div class="kpi-section-title" style="margin-top:24px;">🌿 Sustainability KPIs</div>
     <div class="kpi-grid">
       <div class="kpi-c blue"><div class="kpi-l">Stakeholder Meetings</div><div class="kpi-v blue">""" + str(kpi_data['sustain'].get('meetings',0)) + """</div></div>
       <div class="kpi-c amber"><div class="kpi-l">Grievances Received</div><div class="kpi-v amber">""" + str(kpi_data['sustain'].get('grievance_recv',0)) + """</div></div>
@@ -1597,6 +1655,58 @@ window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
       <div class="kpi-c purple"><div class="kpi-l">Workplace Incidents</div><div class="kpi-v purple">""" + str(kpi_data['sustain'].get('wp_incidents',0)) + """</div></div>
       <div class="kpi-c teal"><div class="kpi-l">Gender Ratio (M:F)</div><div class="kpi-v teal" style="font-size:22px;">""" + str(kpi_data['sustain'].get('gender_ratio','—')) + """</div><div class="kpi-s">M """ + str(kpi_data['sustain'].get('male',0)) + """ · F """ + str(kpi_data['sustain'].get('female',0)) + """</div></div>
     </div>
+    </div><!-- end kpanel-hse -->
+
+    <!-- E&S SUB-PANEL -->
+    <div id="kpanel-es" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+        <div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#f1f5f9;">🌱 Environmental &amp; Social KPI Dashboard</div><div style="font-size:12px;color:#64748b;margin-top:3px;">TotalEnergies Compliance · 2025 YTD + Monthly Trends</div></div>
+        <div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:8px 20px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#34d399;">2025 YTD · Apr 2026</div>
+      </div>
+      <div class="kpi-section-title">📌 E&amp;S Highlights — Combined R1+R2</div>
+      <div class="kpi-grid">
+        <div class="kpi-c green"><div class="kpi-l">Penalties / Fines</div><div class="kpi-v green">""" + str(int(es_comb.get('penalties',0))) + """</div><div class="kpi-s">Env violations</div></div>
+        <div class="kpi-c blue"><div class="kpi-l">External Audits</div><div class="kpi-v blue">""" + str(int(es_comb.get('audits',0))) + """</div><div class="kpi-s">R1+R2</div></div>
+        <div class="kpi-c amber"><div class="kpi-l">Stakeholder Meetings</div><div class="kpi-v amber">""" + str(int(es_comb.get('stakeholder',0))) + """</div><div class="kpi-s">R1+R2</div></div>
+        <div class="kpi-c red"><div class="kpi-l">Grievances</div><div class="kpi-v red">""" + str(int(es_comb.get('grievances',0))) + """</div><div class="kpi-s">R1+R2</div></div>
+        <div class="kpi-c orange"><div class="kpi-l">Spill Incidents</div><div class="kpi-v orange">""" + str(int(es_comb.get('spills',0))) + """</div></div>
+      </div>
+      <div class="kpi-section-title" style="margin-top:22px;">⚡ Resource Consumption — Combined (2025 YTD)</div>
+      <div class="kpi-grid">
+        <div class="kpi-c teal"><div class="kpi-l">Diesel (Litres)</div><div class="kpi-v teal">""" + f"{es_comb.get('diesel',0):,.0f}" + """</div><div class="kpi-s">R1+R2</div></div>
+        <div class="kpi-c blue"><div class="kpi-l">Freshwater (m³)</div><div class="kpi-v blue">""" + f"{es_comb.get('freshwater',0):,.0f}" + """</div><div class="kpi-s">R1+R2</div></div>
+        <div class="kpi-c green"><div class="kpi-l">Wastewater (m³)</div><div class="kpi-v green">""" + f"{es_comb.get('wastewater',0):,.0f}" + """</div><div class="kpi-s">R1+R2</div></div>
+        <div class="kpi-c red"><div class="kpi-l">Hazardous (t)</div><div class="kpi-v red">""" + f"{es_comb.get('haz_total',0):,.2f}" + """</div></div>
+        <div class="kpi-c amber"><div class="kpi-l">Non-Haz Waste (t)</div><div class="kpi-v amber">""" + f"{es_comb.get('nonhaz_total',0):,.2f}" + """</div></div>
+        <div class="kpi-c purple"><div class="kpi-l">Waste Cost (OMR)</div><div class="kpi-v purple">""" + f"{es_comb.get('waste_cost',0):,.0f}" + """</div></div>
+      </div>
+      <div class="kpi-section-title" style="margin-top:22px;">⚖️ Riyah 1 vs Riyah 2</div>
+      <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;margin-bottom:22px;">
+        <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.07);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;">E&amp;S KPIs — R1 vs R2 vs Combined</div>
+        <table class="kpi-tbl"><thead><tr><th>KPI</th><th class="num" style="color:#60a5fa;">Riyah 1</th><th class="num" style="color:#34d399;">Riyah 2</th><th class="num">Combined</th></tr></thead><tbody>
+          <tr><td>Penalties</td><td class="num">""" + str(int(es_r1.get('penalties',{}).get('total',0))) + """</td><td class="num">""" + str(int(es_r2.get('penalties',{}).get('total',0))) + """</td><td class="num blue">""" + str(int(es_comb.get('penalties',0))) + """</td></tr>
+          <tr><td>External Audits</td><td class="num">""" + str(int(es_r1.get('audits',{}).get('total',0))) + """</td><td class="num">""" + str(int(es_r2.get('audits',{}).get('total',0))) + """</td><td class="num blue">""" + str(int(es_comb.get('audits',0))) + """</td></tr>
+          <tr><td>Stakeholder Meetings</td><td class="num">""" + str(int(es_r1.get('stakeholder',{}).get('total',0))) + """</td><td class="num">""" + str(int(es_r2.get('stakeholder',{}).get('total',0))) + """</td><td class="num blue">""" + str(int(es_comb.get('stakeholder',0))) + """</td></tr>
+          <tr><td>Grievances</td><td class="num red">""" + str(int(es_r1.get('grievances',{}).get('total',0))) + """</td><td class="num red">""" + str(int(es_r2.get('grievances',{}).get('total',0))) + """</td><td class="num blue">""" + str(int(es_comb.get('grievances',0))) + """</td></tr>
+          <tr><td>Diesel (L)</td><td class="num teal">""" + f"{es_r1.get('diesel',{}).get('total',0):,.0f}" + """</td><td class="num teal">""" + f"{es_r2.get('diesel',{}).get('total',0):,.0f}" + """</td><td class="num blue">""" + f"{es_comb.get('diesel',0):,.0f}" + """</td></tr>
+          <tr><td>Freshwater (m³)</td><td class="num blue">""" + f"{es_r1.get('freshwater',{}).get('total',0):,.2f}" + """</td><td class="num blue">""" + f"{es_r2.get('freshwater',{}).get('total',0):,.2f}" + """</td><td class="num blue">""" + f"{es_comb.get('freshwater',0):,.2f}" + """</td></tr>
+          <tr><td>Hazardous (t)</td><td class="num red">""" + f"{es_r1.get('haz_total',{}).get('total',0):,.2f}" + """</td><td class="num red">""" + f"{es_r2.get('haz_total',{}).get('total',0):,.2f}" + """</td><td class="num blue">""" + f"{es_comb.get('haz_total',0):,.2f}" + """</td></tr>
+          <tr><td>Non-Haz (t)</td><td class="num amber">""" + f"{es_r1.get('nonhaz_total',{}).get('total',0):,.2f}" + """</td><td class="num amber">""" + f"{es_r2.get('nonhaz_total',{}).get('total',0):,.2f}" + """</td><td class="num blue">""" + f"{es_comb.get('nonhaz_total',0):,.2f}" + """</td></tr>
+          <tr><td>Waste Cost (OMR)</td><td class="num purple">""" + f"{es_r1.get('waste_cost',{}).get('total',0):,.0f}" + """</td><td class="num purple">""" + f"{es_r2.get('waste_cost',{}).get('total',0):,.0f}" + """</td><td class="num blue">""" + f"{es_comb.get('waste_cost',0):,.0f}" + """</td></tr>
+          <tr><td>Spills</td><td class="num red">""" + str(int(es_r1.get('spills',{}).get('total',0))) + """</td><td class="num red">""" + str(int(es_r2.get('spills',{}).get('total',0))) + """</td><td class="num blue">""" + str(int(es_comb.get('spills',0))) + """</td></tr>
+          <tr><td>Wastewater (m³)</td><td class="num">""" + f"{es_r1.get('wastewater',{}).get('total',0):,.2f}" + """</td><td class="num">""" + f"{es_r2.get('wastewater',{}).get('total',0):,.2f}" + """</td><td class="num blue">""" + f"{es_comb.get('wastewater',0):,.2f}" + """</td></tr>
+        </tbody></table>
+      </div>
+      <div class="kpi-section-title">📈 Monthly Trends — Riyah 1 (Jan 2025 – Apr 2026)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;"><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;">Diesel (Litres)</div><div style="font-size:10px;color:#64748b;margin-bottom:12px;">Monthly — Riyah 1</div><div style="height:200px;position:relative;"><canvas id="kpiDiesel"></canvas></div></div>
+        <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;"><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;">Freshwater (m³)</div><div style="font-size:10px;color:#64748b;margin-bottom:12px;">Monthly — Riyah 1</div><div style="height:200px;position:relative;"><canvas id="kpiWater"></canvas></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;"><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;">Stakeholder &amp; Grievances</div><div style="font-size:10px;color:#64748b;margin-bottom:12px;">Monthly — Riyah 1</div><div style="height:200px;position:relative;"><canvas id="kpiEng"></canvas></div></div>
+        <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;"><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;">Audits &amp; Spills</div><div style="font-size:10px;color:#64748b;margin-bottom:12px;">Monthly — Riyah 1</div><div style="height:200px;position:relative;"><canvas id="kpiAudit"></canvas></div></div>
+      </div>
+    </div><!-- end kpanel-es -->
 
   </div>
 </div>
@@ -1627,7 +1737,36 @@ window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
 .kpi-tbl .bold{color:#f1f5f9;font-weight:500;}
 .kpi-three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
 @media(max-width:900px){.kpi-three-col{grid-template-columns:1fr;}}
+.kpi-c.orange::after{background:linear-gradient(90deg,#f97316,#fb923c);}
+.kpi-v.orange{color:#fb923c;}
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+var KPI_MONTHS=""" + _json.dumps(MONTHS_ES) + """;
+function showKTab(id){
+  document.getElementById('kpanel-hse').style.display=(id==='hse')?'block':'none';
+  document.getElementById('kpanel-es').style.display=(id==='es')?'block':'none';
+  var hB=document.getElementById('kstab-hse'),eB=document.getElementById('kstab-es');
+  hB.style.background=(id==='hse')?'rgba(59,130,246,.15)':'rgba(255,255,255,.04)';
+  hB.style.color=(id==='hse')?'#f1f5f9':'#64748b';
+  hB.style.borderColor=(id==='hse')?'rgba(59,130,246,.4)':'rgba(255,255,255,.08)';
+  eB.style.background=(id==='es')?'rgba(16,185,129,.15)':'rgba(255,255,255,.04)';
+  eB.style.color=(id==='es')?'#f1f5f9':'#64748b';
+  eB.style.borderColor=(id==='es')?'rgba(16,185,129,.4)':'rgba(255,255,255,.08)';
+  if(id==='es')buildESCharts();
+}
+var esBuilt=false;
+function buildESCharts(){
+  if(esBuilt)return; esBuilt=true;
+  var co={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#64748b',font:{size:10}}},x:{grid:{display:false},ticks:{color:'#64748b',font:{size:9},maxRotation:45,minRotation:45}}}};
+  var mco={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:'#94a3b8',font:{size:10},boxWidth:10}}},scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#64748b',font:{size:10}}},x:{grid:{display:false},ticks:{color:'#64748b',font:{size:9},maxRotation:45,minRotation:45}}}};
+  new Chart(document.getElementById('kpiDiesel'),{type:'line',data:{labels:KPI_MONTHS,datasets:[{data:""" + _json.dumps(es_r1.get('diesel',{}).get('monthly',[])) + """,borderColor:'#06b6d4',backgroundColor:'#06b6d422',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#06b6d4',borderWidth:2.5}]},options:co});
+  new Chart(document.getElementById('kpiWater'),{type:'line',data:{labels:KPI_MONTHS,datasets:[{data:""" + _json.dumps(es_r1.get('freshwater',{}).get('monthly',[])) + """,borderColor:'#3b82f6',backgroundColor:'#3b82f622',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#3b82f6',borderWidth:2.5}]},options:co});
+  new Chart(document.getElementById('kpiEng'),{type:'bar',data:{labels:KPI_MONTHS,datasets:[{label:'Meetings',data:""" + _json.dumps(es_r1.get('stakeholder',{}).get('monthly',[])) + """,backgroundColor:'#10b981cc',borderRadius:4},{label:'Grievances',data:""" + _json.dumps(es_r1.get('grievances',{}).get('monthly',[])) + """,backgroundColor:'#ef4444cc',borderRadius:4}]},options:mco});
+  new Chart(document.getElementById('kpiAudit'),{type:'bar',data:{labels:KPI_MONTHS,datasets:[{label:'Audits',data:""" + _json.dumps(es_r1.get('audits',{}).get('monthly',[])) + """,backgroundColor:'#8b5cf6cc',borderRadius:4},{label:'Spills',data:""" + _json.dumps(es_r1.get('spills',{}).get('monthly',[])) + """,backgroundColor:'#f97316cc',borderRadius:4}]},options:mco});
+}
+</script>
 
 <footer>Riyah 1 &amp; 2 Wind IPP Project &nbsp;·&nbsp; Document Dashboard &nbsp;·&nbsp; Developed By Shaguf Ahmed</footer>
 </body>
@@ -1650,6 +1789,26 @@ print(f"  - Client NCR table: Status filter (All/Open/Closed)")
 print(f"  - Export to CSV buttons on all tables")
 
 # ─────────────────────────────────────────────────────────
+# AUTO PUSH TO GITHUB
+# ─────────────────────────────────────────────────────────
+print("\n" + "="*50)
+print("📤 Pushing to GitHub automatically...")
+print("="*50)
+
+import subprocess
+import os
+import datetime
+
+os.chdir(r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard")
+
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", f"auto update {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"])
+subprocess.run(["git", "push", "origin", "master"])
+
+print("\n✅ GitHub updated successfully!")
+print("🌐 Live link: https://insightdealerin-shag.github.io/HSE_dashboard/")
+print("⏱️ 2-3 minutes me link pe reflect hoga.")
+print("="*50)
 # AUTO PUSH TO GITHUB
 # ─────────────────────────────────────────────────────────
 print("\n" + "="*50)
