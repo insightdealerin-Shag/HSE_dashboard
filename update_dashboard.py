@@ -283,7 +283,7 @@ r2_prev = count_prev(r2_rows)
 
 # Combined
 combined_status = {}
-for k in ['APP', 'AWC', 'REJ', 'RWC', 'UR']:
+for k in ['APP', 'AWC', 'REJ', 'RWC', 'UR', 'IFI']:
     combined_status[k] = r1_status.get(k, 0) + r2_status.get(k, 0)
 
 total_docs = len(r1_rows) + len(r2_rows)
@@ -1186,7 +1186,7 @@ new Chart(document.getElementById('ovContractorChart'), {
 });
 
 // R1 CHARTS
-new Chart(document.getElementById('r1StatusChart'), donutCfg([""" + str(r1_status.get('APP',0)) + """,""" + str(r1_status.get('AWC',0)) + """,""" + str(r1_status.get('REJ',0)) + """,""" + str(r1_status.get('RWC',0)) + """,""" + str(r1_status.get('UR',0)) + """],[C.green,C.amber,C.red,C.blue,C.amber],['APP','AWC','REJ','RWC','UR']));
+new Chart(document.getElementById('r1StatusChart'), donutCfg([""" + str(r1_status.get('APP',0)) + """,""" + str(r1_status.get('AWC',0)) + """,""" + str(r1_status.get('REJ',0)) + """,""" + str(r1_status.get('RWC',0)) + """,""" + str(r1_status.get('UR',0)) + """,""" + str(r1_status.get('IFI',0)) + """],[C.green,C.amber,C.red,C.blue,C.amber,C.purple],['APP','AWC','REJ','RWC','UR','IFI']));
 
 new Chart(document.getElementById('r1TypeChart'), {
   type:'bar', indexAxis:'y',
@@ -1208,7 +1208,7 @@ new Chart(document.getElementById('r1PrevChart'), {
 });
 
 // R2 CHARTS
-new Chart(document.getElementById('r2StatusChart'), donutCfg([""" + str(r2_status.get('APP',0)) + """,""" + str(r2_status.get('AWC',0)) + """,""" + str(r2_status.get('RWC',0)) + """,""" + str(r2_status.get('UR',0)) + """],[C.green,C.amber,C.blue,C.amber],['APP','AWC','RWC','UR']));
+new Chart(document.getElementById('r2StatusChart'), donutCfg([""" + str(r2_status.get('APP',0)) + """,""" + str(r2_status.get('AWC',0)) + """,""" + str(r2_status.get('RWC',0)) + """,""" + str(r2_status.get('UR',0)) + """,""" + str(r2_status.get('IFI',0)) + """],[C.green,C.amber,C.blue,C.amber,C.purple],['APP','AWC','RWC','UR','IFI']));
 
 new Chart(document.getElementById('r2TypeChart'), {
   type:'bar', indexAxis:'y',
