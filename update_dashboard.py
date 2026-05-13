@@ -427,8 +427,8 @@ if cncr_open > 0:
 today = datetime.datetime.now().strftime("%d %b %Y")
 
 # Prepare data for JSON embedding
-r1_docs_json = json.dumps([(str(r[0]).strip(), str(r[1]).strip(), int(r[2]) if r[2] else 0, str(r[4]).strip() if len(r)>4 and r[4] else '', fmt_date(r[3]) if len(r)>3 else '—', str(r[8]).strip() if len(r)>8 and r[8] else '') for r in r1_rows])
-r2_docs_json = json.dumps([(str(r[0]).strip(), str(r[1]).strip(), int(r[2]) if r[2] else 0, str(r[4]).strip() if len(r)>4 and r[4] else '', fmt_date(r[3]) if len(r)>3 else '—', str(r[8]).strip() if len(r)>8 and r[8] else '') for r in r2_rows])
+r1_docs_json = json.dumps([(str(r[0]).strip(), str(r[1]).strip(), int(r[2]) if r[2] else 0, str(r[4]).strip() if len(r)>4 and r[4] else '', fmt_date(r[10]) if len(r)>10 else '—', str(r[8]).strip() if len(r)>8 and r[8] else '') for r in r1_rows])
+r2_docs_json = json.dumps([(str(r[0]).strip(), str(r[1]).strip(), int(r[2]) if r[2] else 0, str(r[4]).strip() if len(r)>4 and r[4] else '', fmt_date(r[10]) if len(r)>10 else '—', str(r[8]).strip() if len(r)>8 and r[8] else '') for r in r2_rows])
 ncr_data_json = json.dumps([(i+1, str(r[1]).strip() if len(r)>1 else '', fmt_date(r[2]) if len(r)>2 else '—', str(r[3]).strip() if len(r)>3 else '', str(r[4]).strip() if len(r)>4 else '', str(r[5]).strip() if len(r)>5 else '', str(r[6]).strip() if len(r)>6 else '', fmt_date(r[8]) if len(r)>8 else '—', str(r[9]).strip() if len(r)>9 else '') for i, r in enumerate(ncr_rows)])
 cncr_data_json = json.dumps([(i+1, str(r[1]).strip() if len(r)>1 else '', str(r[3]).strip() if len(r)>3 else 'Major', fmt_date(r[2]) if len(r)>2 else '—', str(r[4]).strip() if len(r)>4 else '', str(r[6]).strip() if len(r)>6 else '', str(r[7]).strip() if len(r)>7 else '', fmt_date(r[8]) if len(r)>8 else '—', str(r[9]).strip() if len(r)>9 else '') for i, r in enumerate(cncr_rows)])
 
@@ -994,7 +994,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
         </select>
         <span class="filter-count" id="r1Count"></span>
       </div>
-      <div class="tbl-scroll"><table><thead><tr><th>Doc Code</th><th>Document Name</th><th>Rev</th><th>Status</th><th>Deadline</th><th>Type</th></tr></thead><tbody id="r1TableBody"></tbody></table></div>
+      <div class="tbl-scroll"><table><thead><tr><th>Doc Code</th><th>Document Name</th><th>Rev</th><th>Status</th><th>Date</th><th>Type</th></tr></thead><tbody id="r1TableBody"></tbody></table></div>
     </div>
   </div>
 </div>
@@ -1046,7 +1046,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
         </select>
         <span class="filter-count" id="r2Count"></span>
       </div>
-      <div class="tbl-scroll"><table><thead><tr><th>Doc Code</th><th>Document Name</th><th>Rev</th><th>Status</th><th>Deadline</th><th>Type</th></tr></thead><tbody id="r2TableBody"></tbody></table></div>
+      <div class="tbl-scroll"><table><thead><tr><th>Doc Code</th><th>Document Name</th><th>Rev</th><th>Status</th><th>Date</th><th>Type</th></tr></thead><tbody id="r2TableBody"></tbody></table></div>
     </div>
   </div>
 </div>
