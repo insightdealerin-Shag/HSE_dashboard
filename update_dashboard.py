@@ -963,7 +963,8 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
           <span class="leg-item"><span class="leg-dot" style="background:#f59e0b"></span>AWC """ + str(r1_status.get('AWC',0)) + """</span>
           <span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>REJ """ + str(r1_status.get('REJ',0)) + """</span>
           <span class="leg-item"><span class="leg-dot" style="background:#3b82f6"></span>RWC """ + str(r1_status.get('RWC',0)) + """</span>
-          <span class="leg-item"><span class="leg-dot" style="background:#f59e0b"></span>UR """ + str(r1_status.get('UR',0)) + """</span></div>
+          <span class="leg-item"><span class="leg-dot" style="background:#f59e0b"></span>UR """ + str(r1_status.get('UR',0)) + """</span>
+          <span class="leg-item"><span class="leg-dot" style="background:#8b5cf6"></span>IFI """ + str(r1_status.get('IFI',0)) + """</span></div>
         <div style="position:relative;height:200px"><canvas id="r1StatusChart"></canvas></div>
       </div>
       <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Document Types</div></div></div>
@@ -1014,7 +1015,8 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
         <div class="legend"><span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>APP """ + str(r2_status.get('APP',0)) + """</span>
           <span class="leg-item"><span class="leg-dot" style="background:#f59e0b"></span>AWC """ + str(r2_status.get('AWC',0)) + """</span>
           <span class="leg-item"><span class="leg-dot" style="background:#3b82f6"></span>RWC """ + str(r2_status.get('RWC',0)) + """</span>
-          <span class="leg-item"><span class="leg-dot" style="background:#f59e0b"></span>UR """ + str(r2_status.get('UR',0)) + """</span></div>
+          <span class="leg-item"><span class="leg-dot" style="background:#f59e0b"></span>UR """ + str(r2_status.get('UR',0)) + """</span>
+          <span class="leg-item"><span class="leg-dot" style="background:#8b5cf6"></span>IFI """ + str(r2_status.get('IFI',0)) + """</span></div>
         <div style="position:relative;height:200px"><canvas id="r2StatusChart"></canvas></div>
       </div>
       <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Document Types</div></div></div>
