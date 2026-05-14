@@ -956,6 +956,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
       <div class="kpi-card red"><div class="kpi-label">Rejected</div><div class="kpi-val red">""" + str(r1_status.get('REJ',0)) + """</div></div>
       <div class="kpi-card teal"><div class="kpi-label">RWC</div><div class="kpi-val teal">""" + str(r1_status.get('RWC',0)) + """</div><div class="kpi-sub">Review w/ comments</div></div>
       <div class="kpi-card blue"><div class="kpi-label">UR</div><div class="kpi-val blue">""" + str(r1_status.get('UR',0)) + """</div><div class="kpi-sub">Under review</div></div>
+      <div class="kpi-card purple"><div class="kpi-label">IFI</div><div class="kpi-val purple">""" + str(r1_status.get('IFI',0)) + """</div><div class="kpi-sub">Issued for Information</div></div>
     </div>
     <div class="chart-grid col2">
       <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Review Status Breakdown</div></div></div>
@@ -1009,6 +1010,7 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
       <div class="kpi-card teal"><div class="kpi-label">RWC</div><div class="kpi-val teal">""" + str(r2_status.get('RWC',0)) + """</div></div>
       <div class="kpi-card red"><div class="kpi-label">Rejected</div><div class="kpi-val red">""" + str(r2_status.get('REJ',0)) + """</div></div>
       <div class="kpi-card blue"><div class="kpi-label">UR</div><div class="kpi-val blue">""" + str(r2_status.get('UR',0)) + """</div></div>
+      <div class="kpi-card purple"><div class="kpi-label">IFI</div><div class="kpi-val purple">""" + str(r2_status.get('IFI',0)) + """</div><div class="kpi-sub">Issued for Information</div></div>
     </div>
     <div class="chart-grid col2">
       <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Review Status Breakdown</div></div></div>
