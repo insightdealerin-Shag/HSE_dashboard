@@ -1717,7 +1717,7 @@ window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
 
 <style>
 .kpi-section-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.07);}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px;}
 .kpi-c{background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;position:relative;overflow:hidden;}
 .kpi-c::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0;}
 .kpi-c.green::after{background:linear-gradient(90deg,#10b981,#34d399);}
