@@ -127,7 +127,7 @@ except Exception as _e:
 
 # ── KPI READING ───────────────────────────────────────────
 kpi_data = {
-    'month': 'April 2026',
+    'month': 'May 2026',
     'days_lti_month': 0, 'days_lti_total': 0,
     'manpower': [], 'total_mp': 0, 'total_hrs': 0, 'cum_total': 0,
     'r1_kpis': [], 'r2_kpis': [], 'combined_kpis': [],
