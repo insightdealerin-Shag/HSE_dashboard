@@ -866,6 +866,68 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
   }
   
   @media (max-width:900px) { .col2,.col3 { grid-template-columns: 1fr; } .panel-body { padding: 20px 16px; } }
+
+@media (max-width: 768px) {
+  /* Header */
+  .header-inner { padding: 12px 16px; }
+  .header-left img { height: 28px; }
+  .header-title { font-size: 12px; }
+  .header-sub { display: none; }
+  .date-badge { font-size: 10px; padding: 4px 8px; }
+
+  /* Tabs - scrollable */
+  .tabs-inner { padding: 0 12px; }
+  .tab-btn { padding: 10px 12px; font-size: 11px; }
+  .count { font-size: 9px; padding: 1px 5px; }
+
+  /* Panel */
+  .panel-body { padding: 16px 12px; }
+
+  /* KPI cards - 2 per row on mobile */
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .kpi-val { font-size: 22px; }
+  .kpi-card { padding: 14px; }
+
+  /* Charts - full width */
+  .col2 { grid-template-columns: 1fr; }
+  .col3 { grid-template-columns: 1fr; }
+  .chart-grid { gap: 10px; }
+
+  /* Tables - scrollable */
+  .tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 600px; }
+  thead th { font-size: 10px; padding: 8px 10px; }
+  tbody td { font-size: 11px; padding: 8px 10px; }
+
+  /* Filter bar */
+  .filter-bar { flex-wrap: wrap; gap: 6px; padding: 10px 12px; }
+  .filter-bar input { width: 100%; }
+  .filter-bar select { flex: 1; font-size: 11px; }
+
+  /* Overview cards */
+  .kpi-three-col { grid-template-columns: 1fr; }
+
+  /* Calendar */
+  .cal-grid { gap: 4px; }
+  .cal-cell { min-height: 60px; padding: 6px; }
+  .cal-num { font-size: 12px; }
+  .cal-prev { font-size: 9px; }
+  .cal-hdr { font-size: 9px; padding: 6px 2px; }
+
+  /* KPI panel */
+  .kpi-tbl-card { overflow-x: auto; }
+  .kpi-tbl { min-width: 400px; }
+  .kpi-two-col { grid-template-columns: 1fr; }
+  .kpi-three-col { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  /* Extra small phones */
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .kpi-val { font-size: 20px; }
+  .tab-btn { padding: 8px 10px; font-size: 10px; }
+  .header-title { font-size: 11px; }
+}
 </style>
 </head>
 <body>
