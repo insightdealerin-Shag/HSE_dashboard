@@ -113,7 +113,11 @@ try:
         _dv = _r[0]; _av = str(_r[1]).strip() if len(_r)>1 and _r[1] else ''
         if not _dv or not _av: continue
         try:
-            _pd = _dt.datetime.strptime(str(_dv).strip(), '%d-%b-%Y')
+            import datetime as _dtm
+            if isinstance(_dv, (_dtm.datetime, _dtm.date)):
+                _pd = _dv
+            else:
+                _pd = _dt.datetime.strptime(str(_dv).strip(), '%d-%b-%Y')
             _k  = f"{_pd.year}-{_pd.month:02d}-{_pd.day:02d}"
             cal_month = _MNL[_pd.month]; cal_year = _pd.year; cal_month_num = _pd.month
         except: continue
