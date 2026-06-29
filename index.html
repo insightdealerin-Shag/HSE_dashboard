@@ -1303,7 +1303,7 @@ window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
           <tr><td>Wastewater (m³)</td><td class="num">892.97</td><td class="num">928.54</td><td class="num blue">1,821.51</td></tr>
         </tbody></table>
       </div>
-      <div class="kpi-section-title">📈 Monthly Trends — Riyah 1 (Jan 2025 – Apr 2026)</div>
+      <div class="kpi-section-title">📈 Monthly Trends — Riyah 1 (Jan 2025 – May 2026)</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
         <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;"><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;">Diesel (Litres)</div><div style="font-size:10px;color:#64748b;margin-bottom:12px;">Monthly — Riyah 1</div><div style="height:200px;position:relative;"><canvas id="kpiDiesel"></canvas></div></div>
         <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;"><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;">Freshwater (m³)</div><div style="font-size:10px;color:#64748b;margin-bottom:12px;">Monthly — Riyah 1</div><div style="height:200px;position:relative;"><canvas id="kpiWater"></canvas></div></div>
@@ -1349,7 +1349,7 @@ window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-var KPI_MONTHS=["Jan-25", "Feb-25", "Mar-25", "Apr-25", "May-25", "Jun-25", "Jul-25", "Aug-25", "Sep-25", "Oct-25", "Nov-25", "Dec-25", "Jan-26", "Feb-26", "Mar-26", "Apr-26"];
+var KPI_MONTHS=["Jan-25", "Feb-25", "Mar-25", "Apr-25", "May-25", "Jun-25", "Jul-25", "Aug-25", "Sep-25", "Oct-25", "Nov-25", "Dec-25", "Jan-26", "Feb-26", "Mar-26", "Apr-26", "May-26"];
 function showKTab(id){
   document.getElementById('kpanel-hse').style.display=(id==='hse')?'block':'none';
   document.getElementById('kpanel-es').style.display=(id==='es')?'block':'none';
@@ -1367,10 +1367,10 @@ function buildESCharts(){
   if(esBuilt)return; esBuilt=true;
   var co={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#64748b',font:{size:10}}},x:{grid:{display:false},ticks:{color:'#64748b',font:{size:9},maxRotation:45,minRotation:45}}}};
   var mco={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:'#94a3b8',font:{size:10},boxWidth:10}}},scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#64748b',font:{size:10}}},x:{grid:{display:false},ticks:{color:'#64748b',font:{size:9},maxRotation:45,minRotation:45}}}};
-  new Chart(document.getElementById('kpiDiesel'),{type:'line',data:{labels:KPI_MONTHS,datasets:[{data:[0, 0, 0, 3434, 7568, 5349, 5331, 32163, 43141, 27053, 46800, 55068, 57307, 59257, 48340, 41002],borderColor:'#06b6d4',backgroundColor:'#06b6d422',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#06b6d4',borderWidth:2.5}]},options:co});
-  new Chart(document.getElementById('kpiWater'),{type:'line',data:{labels:KPI_MONTHS,datasets:[{data:[0, 0, 0, 148.916, 272.548, 667.809, 109.5957, 1216.32, 1953.809, 1845.5073, 2915.651, 3851.108, 3035.735, 2197.474, 1456.3, 814.966],borderColor:'#3b82f6',backgroundColor:'#3b82f622',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#3b82f6',borderWidth:2.5}]},options:co});
-  new Chart(document.getElementById('kpiEng'),{type:'bar',data:{labels:KPI_MONTHS,datasets:[{label:'Meetings',data:[0, 1, 1, 2, 1, 7, 4, 4, 3, 3, 5, 1, 3, 2, 1, 4],backgroundColor:'#10b981cc',borderRadius:4},{label:'Grievances',data:[0, 0, 0, 2, 2, 4, 4, 0, 4, 1, 1, 1, 3, 3, 4, 2],backgroundColor:'#ef4444cc',borderRadius:4}]},options:mco});
-  new Chart(document.getElementById('kpiAudit'),{type:'bar',data:{labels:KPI_MONTHS,datasets:[{label:'Audits',data:[0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1],backgroundColor:'#8b5cf6cc',borderRadius:4},{label:'Spills',data:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],backgroundColor:'#f97316cc',borderRadius:4}]},options:mco});
+  new Chart(document.getElementById('kpiDiesel'),{type:'line',data:{labels:KPI_MONTHS,datasets:[{data:[0, 0, 0, 3434, 7568, 5349, 5331, 32163, 43141, 27053, 46800, 55068, 57307, 59257, 48340, 41002, 38597],borderColor:'#06b6d4',backgroundColor:'#06b6d422',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#06b6d4',borderWidth:2.5}]},options:co});
+  new Chart(document.getElementById('kpiWater'),{type:'line',data:{labels:KPI_MONTHS,datasets:[{data:[0, 0, 0, 148.916, 272.548, 667.809, 109.5957, 1216.32, 1953.809, 1845.5073, 2915.651, 3851.108, 3035.735, 2197.474, 1456.3, 814.966, 698.673],borderColor:'#3b82f6',backgroundColor:'#3b82f622',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#3b82f6',borderWidth:2.5}]},options:co});
+  new Chart(document.getElementById('kpiEng'),{type:'bar',data:{labels:KPI_MONTHS,datasets:[{label:'Meetings',data:[0, 1, 1, 2, 1, 7, 4, 4, 3, 3, 5, 1, 3, 2, 1, 4, 5],backgroundColor:'#10b981cc',borderRadius:4},{label:'Grievances',data:[0, 0, 0, 2, 2, 4, 4, 0, 4, 1, 1, 1, 3, 3, 4, 2, 4],backgroundColor:'#ef4444cc',borderRadius:4}]},options:mco});
+  new Chart(document.getElementById('kpiAudit'),{type:'bar',data:{labels:KPI_MONTHS,datasets:[{label:'Audits',data:[0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0],backgroundColor:'#8b5cf6cc',borderRadius:4},{label:'Spills',data:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],backgroundColor:'#f97316cc',borderRadius:4}]},options:mco});
 }
 </script>
 

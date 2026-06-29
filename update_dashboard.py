@@ -196,7 +196,7 @@ except Exception as _e:
 # ── KPI E&S READING ──────────────────────────────────────
 import json as _json
 es_r1 = {}; es_r2 = {}; es_comb = {}
-MONTHS_ES = ['Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26','Apr-26']
+MONTHS_ES = ['Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26','Apr-26','May-26']
 try:
     _ew = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
     _esw = None
@@ -210,9 +210,9 @@ try:
             if isinstance(v, (int, float)): return v
             return 0
         # R1: rows 2-41 (idx 2-40), monthly=col D-Q (idx 3-18), TOTAL=idx 27
-        def _r1(i): r=_er[i]; return {'monthly':[_en(r[j]) for j in range(3,19)],'total':_en(r[27])}
+        def _r1(i): r=_er[i]; return {'monthly':[_en(r[j]) for j in range(3,20)],'total':_en(r[27])}
         # R2: rows 45-84 (idx 44-83), same structure
-        def _r2(i): r=_er[i]; return {'monthly':[_en(r[j]) for j in range(3,19)],'total':_en(r[27])}
+        def _r2(i): r=_er[i]; return {'monthly':[_en(r[j]) for j in range(3,20)],'total':_en(r[27])}
         # Combined: rows 88-127 (idx 87-126), value=col D (idx 3)
         def _cb(i): return _en(_er[i][3])
         es_r1 = {
@@ -1767,7 +1767,7 @@ window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
           <tr><td>Wastewater (m³)</td><td class="num">""" + f"{es_r1.get('wastewater',{}).get('total',0):,.2f}" + """</td><td class="num">""" + f"{es_r2.get('wastewater',{}).get('total',0):,.2f}" + """</td><td class="num blue">""" + f"{es_comb.get('wastewater',0):,.2f}" + """</td></tr>
         </tbody></table>
       </div>
-      <div class="kpi-section-title">📈 Monthly Trends — Riyah 1 (Jan 2025 – Apr 2026)</div>
+      <div class="kpi-section-title">📈 Monthly Trends — Riyah 1 (Jan 2025 – May 2026)</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
         <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;"><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;">Diesel (Litres)</div><div style="font-size:10px;color:#64748b;margin-bottom:12px;">Monthly — Riyah 1</div><div style="height:200px;position:relative;"><canvas id="kpiDiesel"></canvas></div></div>
         <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;"><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;">Freshwater (m³)</div><div style="font-size:10px;color:#64748b;margin-bottom:12px;">Monthly — Riyah 1</div><div style="height:200px;position:relative;"><canvas id="kpiWater"></canvas></div></div>
