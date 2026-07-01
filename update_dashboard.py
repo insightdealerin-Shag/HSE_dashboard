@@ -14,8 +14,8 @@ from collections import defaultdict
 # ─────────────────────────────────────────────────────────
 #  CONFIG — sirf yahan dono paths set karo
 # ─────────────────────────────────────────────────────────
-EXCEL_PATH = r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\MY_WORK.xlsx"
-OUTPUT_HTML = r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard\index.html"
+EXCEL_PATH = r"C:\Users\Shaghaf Ahmed\OneDrive\Attachments\Desktop\Work\AUTOMATE EXCEL\MY_WORK.xlsx"
+OUTPUT_HTML = r"C:\Users\Shaghaf Ahmed\OneDrive\Attachments\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard\index.html"
 # ─────────────────────────────────────────────────────────
 
 BASE_DATE = datetime.datetime(1899, 12, 30)
@@ -1869,7 +1869,7 @@ import subprocess
 import os
 import datetime
 
-os.chdir(r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard")
+os.chdir(r"C:\Users\Shaghaf Ahmed\OneDrive\Attachments\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard")
 
 subprocess.run(["git", "add", "."])
 subprocess.run(["git", "commit", "-m", f"auto update {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"])
@@ -1889,7 +1889,7 @@ import subprocess
 import os
 import datetime
 
-os.chdir(r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard")
+os.chdir(r"C:\Users\Shaghaf Ahmed\OneDrive\Attachments\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard")
 
 subprocess.run(["git", "add", "."])
 subprocess.run(["git", "commit", "-m", f"auto update {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"])
@@ -1899,3 +1899,4 @@ print("\n✅ GitHub updated successfully!")
 print("🌐 Live link: https://insightdealerin-shag.github.io/HSE_dashboard/")
 print("⏱️ 2-3 minutes me link pe reflect hoga.")
 print("="*50)
+input("\n▶ Press Enter to close...")
