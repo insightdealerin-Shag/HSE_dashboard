@@ -14,8 +14,8 @@ from collections import defaultdict
 # ─────────────────────────────────────────────────────────
 #  CONFIG — sirf yahan dono paths set karo
 # ─────────────────────────────────────────────────────────
-EXCEL_PATH = r"C:\Users\Shaghaf Ahmed\OneDrive\Attachments\Desktop\Work\AUTOMATE EXCEL\MY_WORK.xlsx"
-OUTPUT_HTML = r"C:\Users\Shaghaf Ahmed\OneDrive\Attachments\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard\index.html"
+EXCEL_PATH = r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\MY_WORK.xlsx"
+OUTPUT_HTML = r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard\index.html"
 # ─────────────────────────────────────────────────────────
 
 BASE_DATE = datetime.datetime(1899, 12, 30)
@@ -113,11 +113,7 @@ try:
         _dv = _r[0]; _av = str(_r[1]).strip() if len(_r)>1 and _r[1] else ''
         if not _dv or not _av: continue
         try:
-            import datetime as _dtm
-            if isinstance(_dv, (_dtm.datetime, _dtm.date)):
-                _pd = _dv
-            else:
-                _pd = _dt.datetime.strptime(str(_dv).strip(), '%d-%b-%Y')
+            _pd = _dt.datetime.strptime(str(_dv).strip(), '%d-%b-%Y')
             _k  = f"{_pd.year}-{_pd.month:02d}-{_pd.day:02d}"
             cal_month = _MNL[_pd.month]; cal_year = _pd.year; cal_month_num = _pd.month
         except: continue
@@ -196,7 +192,7 @@ except Exception as _e:
 # ── KPI E&S READING ──────────────────────────────────────
 import json as _json
 es_r1 = {}; es_r2 = {}; es_comb = {}
-MONTHS_ES = ['Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26','Apr-26','May-26']
+MONTHS_ES = ['Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26','Apr-26']
 try:
     _ew = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
     _esw = None
@@ -210,9 +206,9 @@ try:
             if isinstance(v, (int, float)): return v
             return 0
         # R1: rows 2-41 (idx 2-40), monthly=col D-Q (idx 3-18), TOTAL=idx 27
-        def _r1(i): r=_er[i]; return {'monthly':[_en(r[j]) for j in range(3,20)],'total':_en(r[27])}
+        def _r1(i): r=_er[i]; return {'monthly':[_en(r[j]) for j in range(3,19)],'total':_en(r[27])}
         # R2: rows 45-84 (idx 44-83), same structure
-        def _r2(i): r=_er[i]; return {'monthly':[_en(r[j]) for j in range(3,20)],'total':_en(r[27])}
+        def _r2(i): r=_er[i]; return {'monthly':[_en(r[j]) for j in range(3,19)],'total':_en(r[27])}
         # Combined: rows 88-127 (idx 87-126), value=col D (idx 3)
         def _cb(i): return _en(_er[i][3])
         es_r1 = {
@@ -870,68 +866,6 @@ document.addEventListener('keydown', function(e){if(e.key==='Enter')cp();});
   }
   
   @media (max-width:900px) { .col2,.col3 { grid-template-columns: 1fr; } .panel-body { padding: 20px 16px; } }
-
-@media (max-width: 768px) {
-  /* Header */
-  .header-inner { padding: 12px 16px; }
-  .header-left img { height: 28px; }
-  .header-title { font-size: 12px; }
-  .header-sub { display: none; }
-  .date-badge { font-size: 10px; padding: 4px 8px; }
-
-  /* Tabs - scrollable */
-  .tabs-inner { padding: 0 12px; }
-  .tab-btn { padding: 10px 12px; font-size: 11px; }
-  .count { font-size: 9px; padding: 1px 5px; }
-
-  /* Panel */
-  .panel-body { padding: 16px 12px; }
-
-  /* KPI cards - 2 per row on mobile */
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .kpi-val { font-size: 22px; }
-  .kpi-card { padding: 14px; }
-
-  /* Charts - full width */
-  .col2 { grid-template-columns: 1fr; }
-  .col3 { grid-template-columns: 1fr; }
-  .chart-grid { gap: 10px; }
-
-  /* Tables - scrollable */
-  .tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { min-width: 600px; }
-  thead th { font-size: 10px; padding: 8px 10px; }
-  tbody td { font-size: 11px; padding: 8px 10px; }
-
-  /* Filter bar */
-  .filter-bar { flex-wrap: wrap; gap: 6px; padding: 10px 12px; }
-  .filter-bar input { width: 100%; }
-  .filter-bar select { flex: 1; font-size: 11px; }
-
-  /* Overview cards */
-  .kpi-three-col { grid-template-columns: 1fr; }
-
-  /* Calendar */
-  .cal-grid { gap: 4px; }
-  .cal-cell { min-height: 60px; padding: 6px; }
-  .cal-num { font-size: 12px; }
-  .cal-prev { font-size: 9px; }
-  .cal-hdr { font-size: 9px; padding: 6px 2px; }
-
-  /* KPI panel */
-  .kpi-tbl-card { overflow-x: auto; }
-  .kpi-tbl { min-width: 400px; }
-  .kpi-two-col { grid-template-columns: 1fr; }
-  .kpi-three-col { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 480px) {
-  /* Extra small phones */
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .kpi-val { font-size: 20px; }
-  .tab-btn { padding: 8px 10px; font-size: 10px; }
-  .header-title { font-size: 11px; }
-}
 </style>
 </head>
 <body>
@@ -1731,7 +1665,7 @@ window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
     <div id="kpanel-es" style="display:none;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
         <div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#f1f5f9;">🌱 Environmental &amp; Social KPI Dashboard</div><div style="font-size:12px;color:#64748b;margin-top:3px;">TotalEnergies Compliance · 2025 YTD + Monthly Trends</div></div>
-        <div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:8px 20px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#34d399;">2025 YTD · Jun 2026</div>
+        <div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:8px 20px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#34d399;">2025 YTD · May 2026</div>
       </div>
       <div class="kpi-section-title">📌 E&amp;S Highlights — Combined R1+R2</div>
       <div class="kpi-grid">
@@ -1767,7 +1701,7 @@ window.showTab=function(id,btn){_cOST(id,btn);if(id==='calendar')calBuild();};
           <tr><td>Wastewater (m³)</td><td class="num">""" + f"{es_r1.get('wastewater',{}).get('total',0):,.2f}" + """</td><td class="num">""" + f"{es_r2.get('wastewater',{}).get('total',0):,.2f}" + """</td><td class="num blue">""" + f"{es_comb.get('wastewater',0):,.2f}" + """</td></tr>
         </tbody></table>
       </div>
-      <div class="kpi-section-title">📈 Monthly Trends — Riyah 1 (Jan 2025 – May 2026)</div>
+      <div class="kpi-section-title">📈 Monthly Trends — Riyah 1 (Jan 2025 – Apr 2026)</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
         <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;"><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;">Diesel (Litres)</div><div style="font-size:10px;color:#64748b;margin-bottom:12px;">Monthly — Riyah 1</div><div style="height:200px;position:relative;"><canvas id="kpiDiesel"></canvas></div></div>
         <div style="background:#141c2e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;"><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;">Freshwater (m³)</div><div style="font-size:10px;color:#64748b;margin-bottom:12px;">Monthly — Riyah 1</div><div style="height:200px;position:relative;"><canvas id="kpiWater"></canvas></div></div>
@@ -1869,7 +1803,7 @@ import subprocess
 import os
 import datetime
 
-os.chdir(r"C:\Users\Shaghaf Ahmed\OneDrive\Attachments\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard")
+os.chdir(r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard")
 
 subprocess.run(["git", "add", "."])
 subprocess.run(["git", "commit", "-m", f"auto update {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"])
@@ -1889,7 +1823,7 @@ import subprocess
 import os
 import datetime
 
-os.chdir(r"C:\Users\Shaghaf Ahmed\OneDrive\Attachments\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard")
+os.chdir(r"C:\Users\Shaghaf Ahmed\OneDrive\Desktop\Work\AUTOMATE EXCEL\QHSE_dashboard")
 
 subprocess.run(["git", "add", "."])
 subprocess.run(["git", "commit", "-m", f"auto update {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"])
@@ -1899,4 +1833,3 @@ print("\n✅ GitHub updated successfully!")
 print("🌐 Live link: https://insightdealerin-shag.github.io/HSE_dashboard/")
 print("⏱️ 2-3 minutes me link pe reflect hoga.")
 print("="*50)
-input("\n▶ Press Enter to close...")
